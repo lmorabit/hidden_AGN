@@ -8,8 +8,8 @@ from astropy.table import Table, Column, join
 si = -0.8
 
 ## read in SIMBA
-Simba_SF = Table.read( paths.data / 'RLFS_50MYR_SF.csv', format='csv', delimiter=',' )
-Simba_AGN = Table.read( paths.data / 'RLFS_50MYR_AGN.csv', format='csv', delimiter=',' )
+Simba_SF = Table.read( paths.static / 'RLFS_50MYR_SF.csv', format='csv', delimiter=',' )
+Simba_AGN = Table.read( paths.static / 'RLFS_50MYR_AGN.csv', format='csv', delimiter=',' )
 ## shift using spectral index
 Simba_SF['x']  = Simba_SF['x'] + np.log10( np.power( (144./1400.), si ) )
 Simba_AGN['x']  = Simba_AGN['x'] + np.log10( np.power( (144./1400.), si ) )

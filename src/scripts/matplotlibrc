@@ -1,2 +1,5 @@
 # Enforce a non-interactive backend
 backend: agg
+## some other options
+legend.frameon: False
+axes.labelsize: large

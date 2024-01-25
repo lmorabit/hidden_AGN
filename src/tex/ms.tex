@@ -1,15 +1,38 @@
 % Define document class
 \documentclass[usenatbib,fleqn]{mnras}
 \usepackage{showyourwork}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage{soul}
+\usepackage{orcidlink}
+
+\newcommand{\sarc}{$^{\prime\prime}\!\!$}
+\newcommand{\myreferences}{references.bib}
+\newcommand{\frii}{FR$\,$II}
+\newcommand{\fri}{FR$\,$I}
+\newcommand{\wphz}{$\,$W$\,$Hz$^{-1}$}
+\newcommand{\tbpeak}{$T_{b,\mathrm{peak}}$}
+\newcommand{\tbtotal}{$T_{b,\mathrm{total}}$}
+
+% Title
+\title[Running head]{An open source scientific article}
+
+% Author list
+\author[L.K. Morabito]{\parbox{\textwidth}{Leah K. Morabito$^{1,2}$\thanks{E-mail: leah.k.morabito@durham.ac.uk}\orcidlink{0000-0003-0487-6651}\\}\\ 
+$^{1}$Centre for Extragalactic Astronomy, Department of Physics, Durham University, Durham DH1 3LE, UK \\
+$^{2}$Institute for Computational Cosmology, Department of Physics, University of Durham, South Road, Durham DH1 3LE, UK \\ }
 
 % Begin!
 \begin{document}
 
-% Title
-\title{An open source scientific article}
+\date{}
+\pagerange{\pageref{firstpage}--\pageref{lastpage}} \pubyear{2021}
+\maketitle
 
-% Author list
-\author{@lmorabit}
+\label{firstpage}
+
 
 % Abstract with filler text
 \begin{abstract}
@@ -54,7 +77,7 @@ Pellentesque cursus luctus mauris \citep{Luger2021}.
 
 \begin{figure}
     \centering
-    \includegraphics{figures/test.png}
+    \includegraphics[width=0.5\textwidth]{figures/test.png}
     \caption{Caption}
     \label{fig:enter-label}
     \script{testplot.py}

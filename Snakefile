@@ -1,8 +1,8 @@
 rule testplot:
 	input:
-		"RLFS_50MYR_SF.csv"
-		"RLFS_50MYR_AGN.csv"
-		"mauch_sadler_table5.csv"
+		"src/static/RLFS_50MYR_SF.csv"
+		"src/static/RLFS_50MYR_AGN.csv"
+		"src/static/mauch_sadler_table5.csv"
 	output:
 		"test.png"
 	conda:

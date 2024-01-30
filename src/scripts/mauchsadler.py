@@ -53,7 +53,7 @@ plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5,
 plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='SFG' )
 plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='AGN' )
 ## plot the lofar data
-plt.plot( Lmed, RLF[:,1], color='purple', label='data' )
+plt.plot( Lmed, RLF[:,1], 'o', color='purple', label='data' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)
 plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')

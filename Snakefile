@@ -8,7 +8,6 @@ rule testplot:
 		"environment.yml"
 	script:
 		"src/scripts/testplot.py"
-
 rule mauchsadler:
 	input:
 		"src/static/mauch_sadler_table5.csv"

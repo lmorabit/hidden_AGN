@@ -10,7 +10,6 @@ si = -0.8
 ## read in SIMBA
 mauch_sadler = Table.read( paths.static / 'mauch_sadler_table5.csv', format='csv', delimiter=',' )
 ## shift using spectral index
-Simba_SF['x']  = Simba_SF['x'] + np.log10( np.power( (144./1400.), si ) )
 ms_144MHz = mauch_sadler['log10_P1p4GHz'] + np.log10( np.power( (144./1400.), si ) ) 
 
 

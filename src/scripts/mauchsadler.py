@@ -17,7 +17,7 @@ fig = plt.figure( figsize=(5,5) )
 ## plot
 plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5, label='All' )
 plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='SFG' )
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_AGN'], color='orange', linewidth=2.5, label='AGN' )
+plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='AGN' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)
 plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')

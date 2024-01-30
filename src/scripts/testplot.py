@@ -16,7 +16,7 @@ Simba_AGN['x']  = Simba_AGN['x'] + np.log10( np.power( (144./1400.), si ) )
 
 fig = plt.figure( figsize=(5,5) )
 ## plot simba
-plt.plot( Simba_SF['x'], Simba_SF['Curve1'], color='red', linewidth=2.5, label='Simba SF' )
+plt.plot( Simba_SF['x'], Simba_SF['Curve1'], color='green', linewidth=2.5, label='Simba SF' )
 plt.plot( Simba_AGN['x'], Simba_AGN['Curve2'], color='blue', linewidth=2.5, label='Simba AGN' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)

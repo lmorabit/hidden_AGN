@@ -3,6 +3,6 @@ dependencies:
   - conda-forge::pip=21.0.1
   - conda-forge::python=3.9
   - conda-forge::astropy
-  - conda-forge::pulp=2.8.0
+  - conda-forge::pulp=2.7.0
   - pip:
       - matplotlib==3.4.3

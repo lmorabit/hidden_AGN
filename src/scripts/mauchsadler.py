@@ -3,15 +3,45 @@ import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
 from astropy.table import Table, Column, join
+from helper_functions import *
+from astropy.io import fits
 ## WMAP9 is Hinshaw et al. 2013, H_0=69.3, Omega=0.287
 
+## set a default spectral index
 si = -0.8
 
-## read in SIMBA
+## read in Mauch & Sadler Table 5
 mauch_sadler = Table.read( paths.static / 'mauch_sadler_table5.csv', format='csv', delimiter=',' )
 ## shift using spectral index
 ms_144MHz = mauch_sadler['log10_P1p4GHz'] + np.log10( np.power( (144./1400.), si ) ) 
 
+## read in lofar data
+lotss = Table.read( paths.static / 'lockman_final_cross_match_catalogue-v1.0.fits', format='fits' )
+## flux cut
+flux_cut = 150e-6 ## 150 uJy
+valid = np.where( np.logical_or(lotss['Total_flux'] > flux_cut, lotss['Peak_flux'] > flux_cut) )[0]
+lotss = lotss[valid]
+## remove things with no redshifts
+
+## for testing
+#good_z = np.where( np.isfinite(lotss['Z_BEST']) )[0]
+good_z = np.where(lotss['Z_BEST'] < 0.5 )[0]
+lotss = lotss[good_z]
+
+## get z-max
+lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile= paths.data / 'zmaxes' )
+
+
+
+
+## Total area
+rms_image = fits.open( paths.static / 'lockman_rms_starmask_optical.fits' )
+rms = rms_image[0].data
+rms_idx = np.where(rms <= flux_cut)
+npix_total = len(rms_idx[0])
+pixscale = np.abs(rms_image[0].header['CDELT1'])
+pixarea = np.power(pixscale, 2.)
+area_deg2 = npix_total * pixarea
 
 fig = plt.figure( figsize=(5,5) )
 ## plot

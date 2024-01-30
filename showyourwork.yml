@@ -34,6 +34,7 @@ dependencies:
    src/scripts/testplot.py:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/RLFS_50MYR_SF.csv
+   src/scripts/mauchsadler.py:
      - src/static/mauch_sadler_table5.csv
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex

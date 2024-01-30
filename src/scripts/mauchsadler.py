@@ -29,7 +29,7 @@ good_z = np.where(lotss['Z_BEST'] < 0.5 )[0]
 lotss = lotss[good_z]
 
 ## get z-max
-lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile= paths.data / 'zmaxes' )
+lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile='zmaxes' )
 
 
 

@@ -1,3 +1,13 @@
+rule generateZmaxes:
+	input:
+		"src/static/lockman_final_cross_match_catalogue-v1.0.fits"
+		"src/static/lockman_rms_starmask_optical.fits"
+	output:
+		"src/data/zmaxes.fits"
+	conda:
+		"environment.yml"
+	script:
+		"src/scripts/generateZmaxes.py"
 rule testplot:
 	input:
 		"src/static/RLFS_50MYR_SF.csv"
@@ -11,8 +21,7 @@ rule testplot:
 rule mauchsadler:
 	input:
 		"src/static/mauch_sadler_table5.csv"
-		"src/static/lockman_final_cross_match_catalogue-v1.0.fits"
-		"src/static/lockman_rms_starmask_optical.fits"
+		"src/data/zmaxes.fits"
 	output:
 		"mauch_sadler_RLFs.png"
 	conda:

@@ -31,13 +31,14 @@ datasets:
 
 # Custom file dependencies
 dependencies:
+   src/scripts/generateZmaxes.py:
+     - src/static/lockman_final_cross_match_catalogue-v1.0.fits
+     - src/static/lockman_rms_starmask_optical.fits
    src/scripts/testplot.py:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/RLFS_50MYR_SF.csv
    src/scripts/mauchsadler.py:
      - src/static/mauch_sadler_table5.csv
-     - src/static/lockman_final_cross_match_catalogue-v1.0.fits
-     - src/static/lockman_rms_starmask_optical.fits
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 

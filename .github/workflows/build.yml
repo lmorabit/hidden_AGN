@@ -13,11 +13,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          showyourwork-spec: git+https://github.com/showyourwork/showyourwork
 
       - name: Build the article PDF
         id: build
         uses: showyourwork/showyourwork-action@v1
+        with:
+          showyourwork-spec: git+https://github.com/showyourwork/showyourwork
         env:
           SANDBOX_TOKEN: ${{ secrets.SANDBOX_TOKEN }}
           OVERLEAF_EMAIL: ${{ secrets.OVERLEAF_EMAIL }}

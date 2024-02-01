@@ -1,5 +1,5 @@
 # Snakemake and showyourwork temporaries
-**/.snakemake
+**/.snakemake*
 **/.showyourwork*
 
 # Showyourwork output files

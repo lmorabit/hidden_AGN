@@ -4,7 +4,6 @@ rule generateZmaxes:
 		"src/static/lockman_rms_starmask_optical.fits"
 	output:
 		"src/data/zmaxes.fits"
-	cache: True
 	conda:
 		"environment.yml"
 	script:

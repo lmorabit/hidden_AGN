@@ -31,6 +31,7 @@ flux_cut = 150e-6 ## 150 uJy
 valid = np.where( np.logical_or(lotss['Total_flux'] > flux_cut, lotss['Peak_flux'] > flux_cut) )[0]
 
 lotss = lotss[valid]
+print(lotss_zmax.shape)
 lotss_zmax = lotss_zmax[valid]
 
 ## Total area

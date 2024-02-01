@@ -1,6 +1,7 @@
 # Snakemake and showyourwork temporaries
 **/.snakemake*
 **/.showyourwork*
+**/.Snakefile*
 
 # Showyourwork output files
 /*.pdf

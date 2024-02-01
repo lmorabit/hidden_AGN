@@ -8,6 +8,7 @@ rule generateZmaxes:
 		"environment.yml"
 	script:
 		"src/scripts/generateZmaxes.py"
+
 rule testplot:
 	input:
 		"src/static/RLFS_50MYR_SF.csv"
@@ -18,6 +19,7 @@ rule testplot:
 		"environment.yml"
 	script:
 		"src/scripts/testplot.py"
+
 rule mauchsadler:
 	input:
 		"src/static/mauch_sadler_table5.csv"

@@ -31,9 +31,13 @@ datasets:
 
 # Custom file dependencies
 dependencies:
+
+   # scripts that generate data files
    src/scripts/generateZmaxes.py:
      - src/static/lockman_final_cross_match_catalogue-v1.0.fits
      - src/static/lockman_rms_starmask_optical.fits
+
+   # scripts that generate figures
    src/scripts/testplot.py:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/RLFS_50MYR_SF.csv

@@ -113,7 +113,7 @@ def RLF_from_zmax( Lum, zz, lum_bins, redshift_bins, myzmax, area_cov, area_unit
     log10_L_total = np.log10( Lum )
 
     ## create an array for the RLF
-    lum_func = np.zeros( (len(lum_bins),len(redshift_bins)) )
+    lum_func = np.zeros( (len(lum_bins),len(redshift_bins)-1) )
     lum_func_up = np.copy(lum_func)
     lum_func_lo = np.copy(lum_func)
     ## median luminosities
@@ -153,7 +153,7 @@ def RLF_from_zmax( Lum, zz, lum_bins, redshift_bins, myzmax, area_cov, area_unit
                 vmax[greater_vmax] = vmax_z
                 vmax = vmax - vmin_z
                 ## sum 1/vmax to get lum func
-                lum_func[rr,ss] = np.log10( np.nansum( 1./vmax.value ) / ( lum_bins[rr] - lum_bins[rr-1] ) )
+                lum_func[rr,ss-1] = np.log10( np.nansum( 1./vmax.value ) / ( lum_bins[rr] - lum_bins[rr-1] ) )
                 ## now ... error propagation
                 if error_type == 'data':
                     ## intuitively this seems better, but then I end up with such small errors that vmax_up = vmax or vmax_lo = vmax
@@ -165,29 +165,42 @@ def RLF_from_zmax( Lum, zz, lum_bins, redshift_bins, myzmax, area_cov, area_unit
                     vmax_lo = vmax_lo - vmin_z
                     greater_vmax = np.where( vmax_lo > vmax_z )
                     vmax_lo[greater_vmax] = vmax_lo[greater_vmax] - vmax_z
-                    lum_func_up[rr,ss] = np.log10( np.nansum( 1./vmax_up.value ) )
-                    lum_func_lo[rr,ss] = np.log10( np.nansum( 1./vmax_lo.value ) )
+                    lum_func_up[rr,ss-1] = np.log10( np.nansum( 1./vmax_up.value ) )
+                    lum_func_lo[rr,ss-1] = np.log10( np.nansum( 1./vmax_lo.value ) )
                 elif error_type == 'rms':
                     err_term = np.sqrt( np.nansum( 1. / np.power(vmax.value, 2.) ) ) / ( lum_bins[rr] - lum_bins[rr-1] )
-                    lum_func_up[rr,ss] = np.log10( np.power( 10., lum_func[rr,ss] ) + err_term )
-                    test = np.power( 10., lum_func[rr,ss] ) - err_term
+                    lum_func_up[rr,ss-1] = np.log10( np.power( 10., lum_func[rr,ss-1] ) + err_term )
+                    test = np.power( 10., lum_func[rr,ss-1] ) - err_term
                     if test == 0:
                         ## set to zero
-                        lum_func_lo[rr,ss] = 0.
+                        lum_func_lo[rr,ss-1] = 0.
                     else:
-                        lum_func_lo[rr,ss] = np.log10( np.power( 10., lum_func[rr,ss] ) - err_term )
-                med_lum[rr,ss] = np.nanmedian( np.log10(Lum[bin_idx]) )
-                med_lum_err[rr,ss] = apy_mad( Lum[bin_idx] )
+                        lum_func_lo[rr,ss-1] = np.log10( np.power( 10., lum_func[rr,ss-1] ) - err_term )
+                med_lum[rr,ss-1] = np.nanmedian( np.log10(Lum[bin_idx]) )
+                med_lum_err[rr,ss-1] = apy_mad( Lum[bin_idx] )
             else:
                 print( 'Skipping empty bin.' )
                 ## set to zero
-                lum_func[rr,ss] = 0
-                lum_func_up[rr,ss] = 0
-                lum_func_lo[rr,ss] = 0
-                med_lum[rr,ss] = 0
-                med_lum_err[rr,ss] = 0
+                lum_func[rr,ss-1] = 0
+                lum_func_up[rr,ss-1] = 0
+                lum_func_lo[rr,ss-1] = 0
+                med_lum[rr,ss-1] = 0
+                med_lum_err[rr,ss-1] = 0
             pb.next()
     pb.finish()
 
-    return( lum_func, lum_func_up, lum_func_lo, med_lum, med_lum_err, N_obj )
+    ## create a final array to return
+    RLF = Table()
+    RLF.add_column( lum_func.flatten(), name = 'RLF' )
+    RLF.add_column( lum_func_up.flatten(), name = 'RLF_up' )
+    RLF.add_column( lum_func_lo.flatten(), name = 'RLF_lo' )
+    RLF.add_column( med_lum.flatten(), name = 'Lmedian' )
+    RLF.add_column( med_lum_err.flatten(), name = 'Lmedian_err' )
+    RLF.add_column( N_obj, name='N_obj' )
+
+    #outname = 'RLF_{:s}_{:s}.fits'.format(str(redshift_bins[0]).replace('.','p'), str(redshift_bins[1]).replace('.','p') )
+    outname = 'RLF.fits'
+    RLF.write( paths.data / outname, format='fits' )
+
+    return( paths.data / outname )
 

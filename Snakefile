@@ -4,6 +4,7 @@ rule generateZmaxes:
 		"src/static/lockman_rms_starmask_optical.fits"
 	output:
 		"src/data/zmaxes.fits"
+		"src/data/RLF.fits"
 	conda:
 		"environment.yml"
 	script:
@@ -21,7 +22,7 @@ rule testplot:
 rule mauchsadler:
 	input:
 		"src/static/mauch_sadler_table5.csv"
-		"src/data/zmaxes.fits"
+		"src/data/RLF.fits"
 	output:
 		"mauch_sadler_RLFs.png"
 	conda:

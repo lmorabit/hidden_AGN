@@ -7,23 +7,25 @@ from helper_functions import *
 from astropy.io import fits
 ## WMAP9 is Hinshaw et al. 2013, H_0=69.3, Omega=0.287
 
-## test comment
-
-## set a default spectral index
+#########################################
+## default parameters to adjust
 si = -0.8
-
-## read in Mauch & Sadler Table 5
-mauch_sadler = Table.read( paths.static / 'mauch_sadler_table5.csv', format='csv', delimiter=',' )
-## shift using spectral index
-ms_144MHz = mauch_sadler['log10_P1p4GHz'] + np.log10( np.power( (144./1400.), si ) ) 
+zmin = 0.003  ## matches Mauch & Sadler 2007
+zmax = 0.3   ## matches Mauch & Sadler 2007
+flux_cut = 150e-6
 
 ## read in lofar data
 lotss = Table.read( paths.static / 'lockman_final_cross_match_catalogue-v1.0.fits', format='fits' )
-## remove things with no redshifts
-## for testing
-#good_z = np.where(lotss['Z_BEST'] < 0.5 )[0]
-good_z = np.where( np.isfinite(lotss['Z_BEST']) )[0]
+## remove things with no redshifts, i.e. those which are masked
+good_z = np.where( np.logical_not(lotss['Z_BEST'].mask) )[0]
 lotss = lotss[good_z]
+## remove the mask to avoid warnings later on
+lotss['Z_BEST'] = np.ma.getdata(lotss['Z_BEST'])
+
+test = True
+if test:
+    good_z = np.where(lotss['Z_BEST'] < zmax )[0]
+    lotss = lotss[good_z]
 
 ## Total area
 rms_image = fits.open( paths.static / 'lockman_rms_starmask_optical.fits' )
@@ -36,3 +38,17 @@ area_deg2 = npix_total * pixarea
 
 ## get z-max
 lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile='zmaxes' )
+
+## calculate RLFs
+redshift_bins = np.arange( 0.0, zmax+0.001,zmax )
+
+redshift_bins = np.array([zmin,zmax])
+lum_bins = np.arange( 19.8, 27, 0.4 ) + np.log10( np.power( (144./1400.), si ) )
+Lrad = radio_power( lotss['Total_flux'], lotss['Z_BEST'], spectral_index=si )
+RLF_file = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
+
+## first  
+
+
+
+

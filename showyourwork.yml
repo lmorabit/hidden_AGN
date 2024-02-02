@@ -44,6 +44,11 @@ dependencies:
    src/scripts/mauchsadler.py:
      - src/data/RLF.fits
      - src/static/mauch_sadler_table5.csv
+     - src/static/kondapally_2022_table2.csv
+     - src/static/cochrane_table1.csv
+  src/scripts/completeness.py:
+     - src/static/kondapally_2022_table1.csv
+     - src/static/cochrane_2023_tableA1.csv
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 

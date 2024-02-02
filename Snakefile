@@ -20,6 +20,18 @@ rule testplot:
                 "environment.yml"
         script:
                 "src/scripts/testplot.py"
+rule completeness:
+	input:
+		"src/static/cochrane_2023_table1.csv",
+		"src/static/cochrane_2023_tableA1.csv",
+		"src/static/kondapally_2022_table1.csv",
+		"src/static/kondapally_2022_table2.csv"
+	output:
+		"completeness.png"
+	conda:
+		"environment.yml"
+	script:
+		"src/scripts/completeness.py"
 rule mauchsadler:
         input:
                 "src/static/mauch_sadler_table5.csv",

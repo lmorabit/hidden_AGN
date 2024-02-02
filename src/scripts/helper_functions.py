@@ -198,9 +198,5 @@ def RLF_from_zmax( Lum, zz, lum_bins, redshift_bins, myzmax, area_cov, area_unit
     RLF.add_column( med_lum_err.flatten(), name = 'Lmedian_err' )
     RLF.add_column( N_obj, name='N_obj' )
 
-    #outname = 'RLF_{:s}_{:s}.fits'.format(str(redshift_bins[0]).replace('.','p'), str(redshift_bins[1]).replace('.','p') )
-    outname = 'RLF.fits'
-    RLF.write( paths.data / outname, format='fits' )
-
-    return( paths.data / outname )
+    return( RLF )
 

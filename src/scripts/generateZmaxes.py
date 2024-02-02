@@ -45,10 +45,12 @@ redshift_bins = np.arange( 0.0, zmax+0.001,zmax )
 redshift_bins = np.array([zmin,zmax])
 lum_bins = np.arange( 19.8, 27, 0.4 ) + np.log10( np.power( (144./1400.), si ) )
 Lrad = radio_power( lotss['Total_flux'], lotss['Z_BEST'], spectral_index=si )
-RLF_file = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
+RLF = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
 
 ## first  
-
+#outname = 'RLF_{:s}_{:s}.fits'.format(str(redshift_bins[0]).replace('.','p'), str(redshift_bins[1]).replace('.','p') )
+outname = 'RLF.fits'
+RLF.write( paths.data / outname, format='fits' )
 
 
 

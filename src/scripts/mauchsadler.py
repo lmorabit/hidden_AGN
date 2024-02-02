@@ -26,8 +26,8 @@ plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2
 ## plot the lofar data, filtering zeros
 non_zero = np.where( RLF['RLF'] != 0.0 )[0]
 RLF = RLF[non_zero]
-plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='purple', alpha=0.5 )
-plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='purple', label='data' )
+plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='green', alpha=0.5 )
+plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='green', label='data' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)
 plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')

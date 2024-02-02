@@ -42,10 +42,10 @@ area_deg2 = npix_total * pixarea
 lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile='zmaxes' )
 
 ## calculate RLFs
-redshift_bins = np.arange( 0.0, zmax+0.001,zmax )
+#redshift_bins = np.arange( 0.0, zmax+0.001,zmax )
 
 redshift_bins = np.array([zmin,zmax])
-lum_bins = np.arange( 19.8, 27, 0.4 ) + np.log10( np.power( (144./1400.), si ) )
+lum_bins = np.arange( 19.5, 27, 0.5 ) + np.log10( np.power( (144./1400.), si ) )
 Lrad = radio_power( lotss['Total_flux'], lotss['Z_BEST'], spectral_index=si )
 RLF = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
 

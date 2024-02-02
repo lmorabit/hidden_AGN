@@ -24,7 +24,7 @@ kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='cs
 
 fig = plt.figure( figsize=(5,5) )
 ## plot simba
-plt.plot( cochrane['FluxDensity_mJy'], cochrane['Lockman'], color=mycols_m[50], linewidth=2.5, label='SFGs, Cochrane' )
+plt.plot( cochrane['FluxDensity_mJy'], cochrane['Lockman'], color=mycols_m[250], linewidth=2.5, label='SFGs, Cochrane' )
 plt.plot( kondapally['FluxDensity_mJy'], kondapally['Lockman'], color=mycols[20], linewidth=2.5, label='RLAGN, Kondapally' )
 plt.xlabel(r'$S_{\mathrm{144 MHz}}$'+' mJy')
 plt.ylabel('Completeness')
@@ -34,4 +34,5 @@ plt.savefig(paths.figures / 'completeness.png',dpi=300)
 fig.clear()
 
 
-
+## write out the average completeness ... 
+## could weight by fraction of SFG to AGN from Philip's paper

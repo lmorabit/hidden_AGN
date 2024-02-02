@@ -15,14 +15,18 @@ mauch_sadler = Table.read( paths.static / 'mauch_sadler_table5.csv', format='csv
 ## shift using spectral index
 ms_144MHz = mauch_sadler['log10_P1p4GHz'] + np.log10( np.power( (144./1400.), si ) ) 
 
+## lotss data -- star forming galaxies
+cochrane = Table.read( paths.static / 'cochrane_2023_table1.csv', format='csv', delimiter=',' )
+
 ## read in RLF
 RLF = Table.read( paths.data / 'RLF.fits' )
 
 fig = plt.figure( figsize=(5,5) )
 ## plot
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5, label='All' )
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='SFG' )
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='AGN' )
+plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5, label='MS07 All' )
+plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='MS07 SFG' )
+plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='MS07 AGN' )
+plt.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 ## plot the lofar data, filtering zeros
 non_zero = np.where( RLF['RLF'] != 0.0 )[0]
 RLF = RLF[non_zero]

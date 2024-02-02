@@ -14,6 +14,8 @@ zmin = 0.003  ## matches Mauch & Sadler 2007
 zmax = 0.3   ## matches Mauch & Sadler 2007
 flux_cut = 150e-6
 
+## test test
+
 ## read in lofar data
 lotss = Table.read( paths.static / 'lockman_final_cross_match_catalogue-v1.0.fits', format='fits' )
 ## remove things with no redshifts, i.e. those which are masked

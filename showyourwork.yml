@@ -42,7 +42,7 @@ dependencies:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/RLFS_50MYR_SF.csv
    src/scripts/mauchsadler.py:
-     - src/scripts/generateZmaxes.py
+     - src/data/zmaxes.fits
      - src/static/mauch_sadler_table5.csv
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex

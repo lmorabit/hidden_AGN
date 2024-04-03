@@ -23,7 +23,7 @@ cochrane = Table.read( paths.static / 'cochrane_2023_tableA1.csv', format='csv',
 kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='csv', delimiter=',' )
 
 fig = plt.figure( figsize=(9,5) )
-gs = fig.add_gridspec(1,2,hspace=0)
+gs = fig.add_gridspec(1,2,hspace=0,wspace=0)
 axs = gs.subplots(sharex=True,sharey=True)
 ## plot Lockman
 axs[0].plot( cochrane['FluxDensity_mJy'], cochrane['Lockman'], color=mycols_m[250], linewidth=2.5, label='SFGs, Cochrane' )

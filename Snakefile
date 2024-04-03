@@ -1,7 +1,9 @@
 rule generateZmaxes:
 	input:
-		"src/static/lockman_final_cross_match_catalogue-v1.0.fits",
-		"src/static/lockman_rms_starmask_optical.fits"
+		"src/static/lockman_final_cross_match_catalogue-v1.0_classifications.fits",
+		"src/static/lockman_rms_starmask_optical.fits",
+                "src/static/cochrane_2023_tableA1.csv",
+                "src/static/kondapally_2022_table1.csv"
 	output:
 		"src/data/RLF.fits",
 		"src/data/zmaxes.fits"

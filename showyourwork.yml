@@ -34,9 +34,10 @@ dependencies:
 
    # scripts that generate data files
    src/scripts/generateZmaxes.py:
-     - src/static/lockman_final_cross_match_catalogue-v1.0.fits
+     - src/static/lockman_final_cross_match_catalogue-v1.0_classifications.fits
      - src/static/lockman_rms_starmask_optical.fits
-
+     - src/static/kondapally_2022_table1.csv
+     - src/static/cochrane_2023_tableA1.csv
    # scripts that generate figures
    src/scripts/testplot.py:
      - src/static/RLFS_50MYR_AGN.csv

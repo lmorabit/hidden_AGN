@@ -17,7 +17,7 @@ flux_cut = 150e-6
 ## test test
 
 ## read in lofar data
-lotss = Table.read( paths.static / 'lockman_final_cross_match_catalogue-v1.0.fits', format='fits' )
+lotss = Table.read( paths.static / 'lockman_final_cross_match_catalogue-v1.0_classifications.fits', format='fits' )
 ## remove things with no redshifts, i.e. those which are masked
 good_z = np.where( np.logical_not(lotss['Z_BEST'].mask) )[0]
 lotss = lotss[good_z]
@@ -47,7 +47,14 @@ lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_fl
 redshift_bins = np.array([zmin,zmax])
 lum_bins = np.arange( 19.5, 27, 0.5 ) + np.log10( np.power( (144./1400.), si ) )
 Lrad = radio_power( lotss['Total_flux'], lotss['Z_BEST'], spectral_index=si )
+## ompleteness corrections
+cochrane = Table.read( paths.static / 'cochrane_2023_tableA1.csv', format='csv', delimiter=',' )
+kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='csv', delimiter=',' )
 RLF = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
+
+
+
+
 
 ## first  
 #outname = 'RLF_{:s}_{:s}.fits'.format(str(redshift_bins[0]).replace('.','p'), str(redshift_bins[1]).replace('.','p') )

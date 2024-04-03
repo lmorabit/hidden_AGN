@@ -26,7 +26,7 @@ fig = plt.figure( figsize=(9,5) )
 gs = fig.add_gridspec(1,2,hspace=0,wspace=0)
 axs = gs.subplots(sharex=True,sharey=True)
 ## plot Lockman
-axs[0].plot( cochrane['FluxDensity_mJy'], cochrane['Lockman'], color=mycols_m[250], linewidth=2.5, label='SFGs, Cochrane' )
+axs[0].plot( cochrane['FluxDensity_mJy'], cochrane['Lockman'], color=mycols_m[200], linewidth=2.5, label='SFGs, Cochrane' )
 axs[0].plot( kondapally['FluxDensity_mJy'], kondapally['Lockman'], color=mycols[20], linewidth=2.5, label='RLAGN, Kondapally' )
 axs[0].set_xlabel(r'$S_{\mathrm{144 MHz}}$'+' mJy')
 axs[0].set_ylabel('Completeness')
@@ -34,7 +34,7 @@ axs[0].set_ylim((0.8,1.0))
 axs[0].legend()
 axs[0].text(0.05,0.9,'Lockman',transform=axs[0].transAxes)
 ## plot Elais
-axs[1].plot( cochrane['FluxDensity_mJy'], cochrane['Elais'], color=mycols_m[250], linewidth=2.5, label='SFGs, Cochrane' )
+axs[1].plot( cochrane['FluxDensity_mJy'], cochrane['Elais'], color=mycols_m[200], linewidth=2.5, label='SFGs, Cochrane' )
 axs[1].plot( kondapally['FluxDensity_mJy'], kondapally['Elais'], color=mycols[20], linewidth=2.5, label='RLAGN, Kondapally' )
 axs[1].set_xlabel(r'$S_{\mathrm{144 MHz}}$'+' mJy')
 #axs[1].set_ylabel('Completeness')
@@ -47,5 +47,5 @@ fig.clear()
 
 
 
-## write out the average completeness ... 
+## write out the average completeness ... ?
 ## could weight by fraction of SFG to AGN from Philip's paper

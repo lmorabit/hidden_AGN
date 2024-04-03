@@ -7,6 +7,18 @@ from helper_functions import *
 from astropy.io import fits
 ## WMAP9 is Hinshaw et al. 2013, H_0=69.3, Omega=0.287
 
+##############################################################
+## Plotting housekeeping
+
+matplotlib.rcParams['legend.frameon'] = False
+matplotlib.rcParams['axes.labelsize'] = 'large'
+## set up some colours
+n = 255
+mycols = plt.cm.viridis(np.linspace(0, 1,n))
+mycols_m = plt.cm.magma(np.linspace(0, 1,n))
+
+##############################################################
+
 ## set a default spectral index
 si = -0.8
 

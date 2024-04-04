@@ -36,9 +36,9 @@ RLF = Table.read( paths.data / 'RLF.fits' )
 
 fig = plt.figure( figsize=(5,5) )
 ## plot
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5, label='MS07 All' )
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='MS07 SFG' )
-plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='MS07 AGN' )
+#plt.plot( ms_144MHz, mauch_sadler['log10RLF_all'], color='black', linewidth=2.5, label='MS07 All' )
+#plt.plot( ms_144MHz, mauch_sadler['log10RLF_SF'], color='magenta', linewidth=2.5, label='MS07 SFG' )
+#plt.plot( ms_144MHz, mauch_sadler['log10RLF_RLAGN'], color='orange', linewidth=2.5, label='MS07 AGN' )
 plt.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 plt.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
 ## plot the lofar data, filtering zeros
@@ -46,6 +46,7 @@ non_zero = np.where( RLF['RLF'] != 0.0 )[0]
 RLF = RLF[non_zero]
 plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='green', alpha=0.5 )
 plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='green', label='data' )
+plt.plot( RLF_corr['Lmedian'], RLF_corr['RLF'], 'o', color='red', label='data_corr' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)
 plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')

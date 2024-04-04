@@ -41,25 +41,31 @@ area_deg2 = npix_total * pixarea
 ## get z-max
 lotss_zmax = RLF_calculate_zmax( flux_cut, lotss['Source_Name'], lotss['Total_flux'], lotss['E_Total_flux'], lotss['Z_BEST'], np.repeat(si,len(lotss)), outfile='zmaxes' )
 
+## completeness corrections
+cochrane = Table.read( paths.static / 'cochrane_2023_tableA1.csv', format='csv', delimiter=',' )
+kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='csv', delimiter=',' )
+completeness = []
+for i in np.arange(0,len(lotss)):
+    if lotss['Overall_class'][i] == 'SFG':
+        idx = np.where(np.abs(lotss['Total_flux'][i]*1e3 - cochrane['FluxDensity_mJy']) == np.min(np.abs(lotss['Total_flux'][i]*1e3 - cochrane['FluxDensity_mJy'])))[0]
+        completeness.append(cochrane['Lockman'][idx[0]])
+    else:
+        idx = np.where(np.abs(lotss['Total_flux'][i]*1e3 - kondapally['FluxDensity_mJy']) == np.min(np.abs(lotss['Total_flux'][i]*1e3 - kondapally['FluxDensity_mJy'])))[0]
+        completeness.append(kondapally['Lockman'][idx[0]])
+
 ## calculate RLFs
 #redshift_bins = np.arange( 0.0, zmax+0.001,zmax )
 
 redshift_bins = np.array([zmin,zmax])
 lum_bins = np.arange( 19.5, 27, 0.5 ) + np.log10( np.power( (144./1400.), si ) )
 Lrad = radio_power( lotss['Total_flux'], lotss['Z_BEST'], spectral_index=si )
-## ompleteness corrections
-cochrane = Table.read( paths.static / 'cochrane_2023_tableA1.csv', format='csv', delimiter=',' )
-kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='csv', delimiter=',' )
 RLF = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms' )
-
-
-
-
+RLF_corr = RLF_from_zmax( Lrad, lotss['Z_BEST'], lum_bins, redshift_bins, lotss_zmax, area_deg2, area_units='deg2', error_type='rms', completeness=completeness )
 
 ## first  
 #outname = 'RLF_{:s}_{:s}.fits'.format(str(redshift_bins[0]).replace('.','p'), str(redshift_bins[1]).replace('.','p') )
 outname = 'RLF.fits'
 RLF.write( paths.data / outname, format='fits' )
 
-
-
+outname = 'RLF_corr.fits'
+RLF_corr.write( paths.data / outname, format='fits' )

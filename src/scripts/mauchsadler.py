@@ -32,7 +32,7 @@ cochrane = Table.read( paths.static / 'cochrane_2023_table1.csv', format='csv', 
 kondapally = Table.read( paths.static / 'kondapally_2022_table2.csv', format='csv', delimiter=',' )
 
 ## read in vmaxes
-vmaxes = Table.read( paths.data / 'lockman_vmaxes.fits', format='fits' )
+vmaxes = Table.read( paths.data / 'lockman_6arcsec_vmaxes.fits', format='fits' )
 
 
 ## calculate RLFs

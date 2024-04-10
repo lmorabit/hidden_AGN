@@ -36,7 +36,7 @@ rule completeness:
 rule mauchsadler:
         input:
                 "src/static/mauch_sadler_table5.csv",
-                "src/data/lockman_vmaxes.fits",
+                "src/data/lockman_6arcsec_vmaxes.fits",
 		"src/static/kondapally_2022_table2.csv",
 		"src/static/cochrane_2023_table1.csv"
         output:

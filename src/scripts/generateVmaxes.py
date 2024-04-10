@@ -22,9 +22,8 @@ kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='cs
 
 ## Lockman
 infile = paths.static / 'lockman_final_cross_match_catalogue-v1.0_classifications_catalogue_filtered_full_SNR5_fluxscaled_withoffset_noduplicates_with_lotss_DR1_detectable.fits'
-rms_image = paths.static / '{:s}_rms_starmask_optical.fits'.format(field)
-
 field = os.path.basename(infile).split('_')[0]
+rms_image = paths.static / '{:s}_rms_starmask_optical.fits'.format(field)
 lotss = Table.read( infile, format='fits' )
 
 ## 6 arcsec vmaxes

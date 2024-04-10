@@ -31,8 +31,29 @@ ms_144MHz = mauch_sadler['log10_P1p4GHz'] + np.log10( np.power( (144./1400.), si
 cochrane = Table.read( paths.static / 'cochrane_2023_table1.csv', format='csv', delimiter=',' )
 kondapally = Table.read( paths.static / 'kondapally_2022_table2.csv', format='csv', delimiter=',' )
 
-## read in RLF
-RLF = Table.read( paths.data / 'RLF.fits' )
+## read in vmaxes
+vmaxes = Table.read( paths.data / 'lockman_vmaxes.fits', format='fits' )
+
+
+## calculate RLFs
+redshift_bins = np.array([zmin,zmax])
+lum_bins = np.arange( 19.5, 27, 0.5 ) + np.log10( np.power( (144./1400.), si ) )
+Lrad = radio_power( vmaxes['Total_flux'], vmaxes['Z_BEST'], spectral_index=si )
+log10_Lrad = np.log10(Lrad)
+
+phis = []
+for i in np.arange(1,len(lum_bins)):
+    delta_log_L = lum_bins[i] - lum_bins[i-1]
+    lum_idx = np.logical_and( log10_Lrad >= lum_bins[i-1], log10_Lrad < lum_bins[i] )
+    phi = ( 1. / np.power( 10., delta_log_L ) ) * np.sum( 1. / vmaxes['vmax'][lum_idx] )
+    phis.append(phi)
+
+## convert back to "mag" 
+phis = np.asarray(phis)/1e7
+
+lum_bin_cens = lum_bins + 0.5*(lum_bins[1]-lum_bins[0])
+
+
 
 fig = plt.figure( figsize=(5,5) )
 ## plot
@@ -42,11 +63,11 @@ fig = plt.figure( figsize=(5,5) )
 plt.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 plt.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
 ## plot the lofar data, filtering zeros
-non_zero = np.where( RLF['RLF'] != 0.0 )[0]
-RLF = RLF[non_zero]
-plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='green', alpha=0.5 )
-plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='green', label='data' )
-plt.plot( RLF_corr['Lmedian'], RLF_corr['RLF'], 'o', color='red', label='data_corr' )
+non_zero = np.where( phis != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], np.log10(phis[non_zero]), 'o', color='red', label='data_corr' )
+#plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='green', alpha=0.5 )
+#plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='green', label='data' )
+#plt.plot( RLF_corr['Lmedian'], RLF_corr['RLF'], 'o', color='red', label='data_corr' )
 plt.xlim((20,28))
 plt.ylim(-7.5,-2)
 plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')

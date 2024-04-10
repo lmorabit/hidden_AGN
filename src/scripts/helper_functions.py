@@ -56,7 +56,6 @@ def get_source_vmax( power, power_to_flux_factor, V_DLs, completeness, fluxdens,
     if len(noise_diff) < len(flux_at_z):
         flux_at_z = power_to_flux_factor[noise_diff] * power
         V_DLs = V_DLs[noise_diff]
-    completeness = completeness.filled(0)
     solid_angle_at_z = []
     completeness_at_z = []
     for j in np.arange(0,len(flux_at_z)):
@@ -72,7 +71,10 @@ def get_source_vmax( power, power_to_flux_factor, V_DLs, completeness, fluxdens,
     vmax = np.nansum( V_DLs * theta_sz )
     return(vmax)
 
-def get_vmax( lotss, field, zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8 ):
+def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8, rms_image='', cochrane='', kondapally='' ):
+    fluxcol = 'Total_flux{:s}'.format(col_suffix)
+    fluxerrcol = 'E_Total_flux{:s}'.format(col_suffix)
+
     ## remove things with no redshifts, i.e. those which are masked
     good_z = np.where( np.logical_not(lotss['Z_BEST'].mask) )[0]
     lotss = lotss[good_z]
@@ -85,8 +87,6 @@ def get_vmax( lotss, field, zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8 ):
         lotss = lotss[good_z]
 
     ## get solid angle
-    rms_image = paths.static / '{:s}_rms_starmask_optical.fits'.format(field)
-    print(rms_image)
     noise_bins, eff_area_deg2 = effective_area( rms_image )
     eff_area_sr = eff_area_deg2 * np.power( ( np.pi / 180. ), 2. )
     solid_angle = eff_area_sr / ( 4. * np.pi )
@@ -116,10 +116,6 @@ def get_vmax( lotss, field, zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8 ):
     ## sigma cutoff
     sigma_cut = 5.
 
-    ## completeness corrections
-    cochrane = Table.read( paths.static / 'cochrane_2023_tableA1.csv', format='csv', delimiter=',' )
-    kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='csv', delimiter=',' )
-
     ## keep some calculations out of the loop
     DL_fac = 4. * np.pi * np.power( DLs, 2. )
     redshift_kcorr = np.power( (1.+zbin_cens), (1+si) ) 
@@ -138,7 +134,7 @@ def get_vmax( lotss, field, zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8 ):
         else:
             completeness = kondapally[field.capitalize()]
             completeness_fluxDens = kondapally['FluxDensity_mJy']*1e-29
-        vmax = get_source_vmax( power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
+        vmax = get_source_vmax( power[i], power_to_flux_factor, V_DLs, completeness.filled(0), completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
         vmax_lo = get_source_vmax( power[i]-power_error[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
         vmax_up = get_source_vmax( power[i]+power_error[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
         vmaxes.append(vmax)
@@ -151,105 +147,3 @@ def get_vmax( lotss, field, zmin=0.003, zmax=0.3, dz=0.0001, si=-0.8 ):
     lotss.add_column( vmaxes_lo, name='vmax_lo' )
     lotss.add_column( vmaxes_up, name='vmax_up' )
     return( lotss )
-
-def RLF_from_zmax( Lum, zz, lum_bins, redshift_bins, myzmax, area_cov, area_units='deg2', error_type='rms', completeness=[] ):
-    ## error_type can be "data" or "rms"
-    ## "data" will use measured uncertainties to calculate upper and lower values and propagate the errors
-    ## "rms" will use the estimator from Marshall 1985 and is equal to
-    ## 1/(delta log L) * sqrt( sum( 1/vmax^2 )
-
-    ## get log10 of the values
-    log10_L_total = np.log10( Lum )
-
-    ## create an array for the RLF
-    lum_func = np.zeros( (len(lum_bins),len(redshift_bins)-1) )
-    lum_func_up = np.copy(lum_func)
-    lum_func_lo = np.copy(lum_func)
-    ## median luminosities
-    med_lum = np.copy( lum_func )
-    med_lum_err = np.copy( lum_func )
-    ## number of objects
-    N_obj = np.copy( lum_func )
-    
-    if area_units == 'deg2':
-        ## area is in sqare degrees, convert to sr
-        area_sr = area_cov * np.power( ( np.pi / 180. ), 2. )
-        area_val = area_sr / ( 4. * np. pi )
-        ## to avoid evaluating if statements every loop
-        area_scaling = np.repeat( area_val, len(redshift_bins) )
-        area_scaling_zmax = np.repeat( 1., len(Lum))
-    elif area_units == 'Mpc2':
-        ## area in Mpc^2
-        ## this is redshift invariant because H_0 is invariant
-        angular_distance = cosmo.angular_diameter_distance( redshift_bins )
-        area_scaling = area_cov / ( 4. * np.pi * np.power( angular_distance, 2. ) )
-        angular_distance_zmax = cosmo.agular_diameter_distance( myzmax['z_max'] )
-        area_scaling_zmax = area_cov / ( 4. * np.pi * np.power( angular_distance_zmax, 2. ) )
-
-    pb = Bar('Processing', max=len(lum_bins)*len(redshift_bins))
-    for rr in np.arange( 1,len(lum_bins) ):
-        for ss in np.arange( 1, len(redshift_bins) ):
-            ## volumes for the redshift bin
-            vmin_z = cosmo.comoving_volume( redshift_bins[ss-1] ) * area_scaling[ss-1]
-            vmax_z = cosmo.comoving_volume( redshift_bins[ss] ) * area_scaling[ss]
-            lum_idx = np.where( np.logical_and( log10_L_total >= lum_bins[rr-1], log10_L_total < lum_bins[rr] ) )
-            redshift_idx = np.where( np.logical_and( zz >= redshift_bins[ss-1], zz < redshift_bins[ss] ) )
-            bin_idx = np.intersect1d( lum_idx, redshift_idx )
-            N_obj[rr-1,ss-1] = len(bin_idx)
-            if len(bin_idx) > 0:
-                vmax = cosmo.comoving_volume( myzmax['z_max'][bin_idx] )
-                greater_vmax = np.where( vmax > vmax_z )
-                vmax[greater_vmax] = vmax_z
-                vmax = vmax - vmin_z
-                if len(completeness) > 0:
-                    bin_completeness = np.asarray(completeness)[bin_idx]
-                    tmp_idx = np.where(vmax + vmin_z == vmax_z)[0]
-                    vmax = vmax / bin_completeness
-                ## sum 1/vmax to get lum func
-                lum_func[rr,ss-1] = np.log10( np.nansum( 1./vmax.value ) / ( lum_bins[rr] - lum_bins[rr-1] ) )
-                ## now ... error propagation
-                if error_type == 'data':
-                    ## intuitively this seems better, but then I end up with such small errors that vmax_up = vmax or vmax_lo = vmax
-                    vmax_up = cosmo.comoving_volume( myzmax['z_max_up'][ss-1] ) * area_scaling[ss-1]
-                    vmax_up = vmax_up - vmin_z
-                    greater_vmax = np.where( vmax_up > vmax_z )
-                    vmax_up[greater_vmax] = vmax_up[greater_vmax] - vmax_z
-                    vmax_lo = cosmo.comoving_volume( myzmax['z_max_lo'][ss-1] ) * area_scaling[ss-1]
-                    vmax_lo = vmax_lo - vmin_z
-                    greater_vmax = np.where( vmax_lo > vmax_z )
-                    vmax_lo[greater_vmax] = vmax_lo[greater_vmax] - vmax_z
-                    lum_func_up[rr,ss-1] = np.log10( np.nansum( 1./vmax_up.value ) )
-                    lum_func_lo[rr,ss-1] = np.log10( np.nansum( 1./vmax_lo.value ) )
-                elif error_type == 'rms':
-                    err_term = np.sqrt( np.nansum( 1. / np.power(vmax.value, 2.) ) ) / ( lum_bins[rr] - lum_bins[rr-1] )
-                    lum_func_up[rr,ss-1] = np.log10( np.power( 10., lum_func[rr,ss-1] ) + err_term )
-                    test = np.power( 10., lum_func[rr,ss-1] ) - err_term
-                    if test == 0:
-                        ## set to zero
-                        lum_func_lo[rr,ss-1] = 0.
-                    else:
-                        lum_func_lo[rr,ss-1] = np.log10( np.power( 10., lum_func[rr,ss-1] ) - err_term )
-                med_lum[rr,ss-1] = np.nanmedian( np.log10(Lum[bin_idx]) )
-                med_lum_err[rr,ss-1] = apy_mad( Lum[bin_idx] )
-            else:
-                print( 'Skipping empty bin.' )
-                ## set to zero
-                lum_func[rr,ss-1] = 0
-                lum_func_up[rr,ss-1] = 0
-                lum_func_lo[rr,ss-1] = 0
-                med_lum[rr,ss-1] = 0
-                med_lum_err[rr,ss-1] = 0
-            pb.next()
-    pb.finish()
-
-    ## create a final array to return
-    RLF = Table()
-    RLF.add_column( lum_func.flatten(), name = 'RLF' )
-    RLF.add_column( lum_func_up.flatten(), name = 'RLF_up' )
-    RLF.add_column( lum_func_lo.flatten(), name = 'RLF_lo' )
-    RLF.add_column( med_lum.flatten(), name = 'Lmedian' )
-    RLF.add_column( med_lum_err.flatten(), name = 'Lmedian_err' )
-    RLF.add_column( N_obj, name='N_obj' )
-
-    return( RLF )
-

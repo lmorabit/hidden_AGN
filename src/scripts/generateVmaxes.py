@@ -32,7 +32,7 @@ outfits = field + '_6arcsec_vmax.fits'
 vmaxes = get_vmax( lotss, field, col_suffix='_dr1', zmin=zmin, zmax=zmax, dz=dz, si=si, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally )
 vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
 
-print('writing file {:s} and then sleeping for 30 sec'.format(paths.data / outfits))
+print('writing file {:s} and then sleeping for 30 sec'.format(str(paths.data / outfits)))
 time.sleep(30)
 
 

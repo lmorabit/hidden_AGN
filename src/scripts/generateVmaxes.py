@@ -8,6 +8,7 @@ from astropy.io import fits
 import os
 from astropy.cosmology import WMAP9 as cosmo
 ## WMAP9 is Hinshaw et al. 2013, H_0=69.3, Omega=0.287
+import time
 
 #########################################
 ## default parameters to adjust
@@ -31,7 +32,8 @@ outfits = field + '_6arcsec_vmax.fits'
 vmaxes = get_vmax( lotss, field, col_suffix='_dr1', zmin=zmin, zmax=zmax, dz=dz, si=si, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally )
 vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
 
-
+print('writing file {:s} and then sleeping for 30 sec'.format(paths.data / outfits))
+time.sleep(30)
 
 
 ## uncertainties done by bootstrapping. From Kondapally et al.:

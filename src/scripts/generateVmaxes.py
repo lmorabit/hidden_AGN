@@ -28,7 +28,7 @@ rms_image = paths.static / '{:s}_rms_starmask_optical.fits'.format(field)
 lotss = Table.read( infile, format='fits' )
 
 ## 6 arcsec vmaxes
-outfits = field + '_6arcsec_vmax.fits'
+outfits = field + '_6arcsec_vmaxes.fits'
 vmaxes = get_vmax( lotss, field, col_suffix='_dr1', zmin=zmin, zmax=zmax, dz=dz, si=si, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally )
 vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
 

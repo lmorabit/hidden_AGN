@@ -21,6 +21,9 @@ mycols_m = plt.cm.magma(np.linspace(0, 1,n))
 
 ## set a default spectral index
 si = -0.8
+zmin = 0.003  ## matches Mauch & Sadler 2007
+zmax = 0.3   ## matches Mauch & Sadler 2007
+dz = 0.0001  ## matches Cochrane and Kondapally
 
 ## read in Mauch & Sadler Table 5
 mauch_sadler = Table.read( paths.static / 'mauch_sadler_table5.csv', format='csv', delimiter=',' )

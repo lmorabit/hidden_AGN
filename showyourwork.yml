@@ -34,17 +34,16 @@ dependencies:
 
    # scripts that generate data files
    src/scripts/generateVmaxes.py:
-     - src/static/lockman_final_cross_match_catalogue-v1.0_classifications_catalogue_filtered_full_SNR5_fluxscaled_withoffset_noduplicates_with_lotss_DR1_detectable.fits
-     - src/static/lockman_rms_starmask_optical.fits
+     - src/static/lockman_03_matched_inMOC_inHR.fits
+     - src/static/lockman_DR1_rms_masked.fits
      - src/static/kondapally_2022_table1.csv
      - src/static/cochrane_2023_tableA1.csv
    # scripts that generate figures
    src/scripts/testplot.py:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/RLFS_50MYR_SF.csv
-   src/scripts/mauchsadler.py:
+   src/scripts/comparison_plot.py:
      - src/data/lockman_6arcsec_vmaxes.fits
-     - src/static/mauch_sadler_table5.csv
      - src/static/kondapally_2022_table2.csv
      - src/static/cochrane_2023_table1.csv
    src/scripts/completeness.py:

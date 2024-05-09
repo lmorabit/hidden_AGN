@@ -1,7 +1,7 @@
 rule generateVmaxes:
 	input:
-		"src/static/lockman_final_cross_match_catalogue-v1.0_classifications_catalogue_filtered_full_SNR5_fluxscaled_withoffset_noduplicates_with_lotss_DR1_detectable.fits",
-                "src/static/lockman_rms_starmask_optical.fits",
+		"src/static/lockman_03_matched_inMOC_inHR.fits",
+                "src/static/lockman_DR1_rms_masked.fits",
                 "src/static/cochrane_2023_tableA1.csv",
                 "src/static/kondapally_2022_table1.csv"
 	output:
@@ -33,9 +33,8 @@ rule completeness:
 		"environment.yml"
 	script:
 		"src/scripts/completeness.py"
-rule mauchsadler:
+rule comparison_plot:
         input:
-                "src/static/mauch_sadler_table5.csv",
                 "src/data/lockman_6arcsec_vmaxes.fits",
 		"src/static/kondapally_2022_table2.csv",
 		"src/static/cochrane_2023_table1.csv"
@@ -44,5 +43,5 @@ rule mauchsadler:
         conda:
                 "environment.yml"
         script:
-                "src/scripts/mauchsadler.py"
+                "src/scripts/comparison_plot.py"
 

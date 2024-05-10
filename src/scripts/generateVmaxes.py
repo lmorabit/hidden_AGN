@@ -36,39 +36,13 @@ for field in fields:
     rms_image = paths.static / '{:s}_DR1_rms_masked.fits'.format(field)
     lotss = Table.read( infile, format='fits' )
     ## add brightness temperature information
-    compact_flux_per_SA, tb_from = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )
-
-############################################################
-## ONLY VALID FOR T_b IDENTIFIED AND UNRESOLVED
-    ## separate star formation and AGN luminosities
-    lotss_sub_peak = lotss['Total_flux_dr'] - lotss['Peak_flux']
-    e_dr_sub_peak = add_sub_error( lotss['E_Total_flux_dr'], lotss['E_Peak_flux'])
-    AGN_lum = radio_power(lotss['Peak_flux'],lotss['z_best'])
-    e_AGN_lum = radio_power( lotss['E_Peak_flux'], lotss['z_best'])
-    SFR_lum = radio_power(lotss_sub_peak,lotss['z_best'])
-    e_SFR_lum = radio_power( e_dr_sub_peak, lotss['z_best'] )
-    ## calculate the star formation rates ... 
-    ## Smith et al 2021:
-    ## log10(L150) = (0.9+-0.01)*log10(SFR)+(0.33+-0.04)*log10(M/10^10)+22.22+-0.02
-    ## log10(SFR) = ( log10(L150) - (22.22+-0.02) - (0.33+-0.04)*log10(M/10^10) ) / (0.9+-0.01)
-    SFR_lum[np.where(SFR_lum < 0)] = np.nan
-    nan_idx = np.unique(np.concatenate([np.where(np.isnan(SFR_lum))[0], np.where(np.isnan(lotss['Mass_cons']))[0]]))
-    SFR_lum[nan_idx] = 1.
-    lotss['Mass_cons'][nan_idx] = 1.
-    sfr = ( np.log10(SFR_lum) - 22.22 - 0.33*np.log10(lotss['Mass_cons']) ) / 0.9
-    ## re-set the nans
-    SFR_lum[nan_idx] = np.nan
-    lotss['Mass_cons'][nan_idx] = np.nan
-    sfr[nan_idx] = np.nan
-##########################################################
-
-
+    lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )
+    lotss = do_SFR_AGN_separation( lotss )
     ## 6 arcsec vmaxes
     outfits = field + '_6arcsec_vmaxes.fits'
     vmaxes = get_vmax( lotss, field, col_suffix='_dr', zmin=zmin, zmax=zmax, dz=dz, si=si, sigma_cut=sigma_cut, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally, test=False )
     vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
 
-    unresolved_idx = np.where(lotss['Resolved'] == 'U')
     
 
 

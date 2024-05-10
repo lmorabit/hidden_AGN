@@ -69,8 +69,12 @@ def get_tb_information( mycat, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=1e4,
     compact_flux_per_SA = np.copy(compact_flux_per_SA_total)
     compact_flux_per_SA[peak_agn] = compact_flux_per_SA_peak[peak_agn]
 
+    ## add columns to table ... 
+    mycat.add_column( compact_flux_per_SA, name='flux_per_SA' )
+    mycat.add_column( tb_from, name='tb_from' )
+
     ## return the flux density per solid angle and whether it was identified using peak or total
-    return( compact_flux_per_SA, tb_from )
+    return( mycat )
 
 def get_beam_solid_angle( theta1, theta2 ):
     ## for a 2D Gaussian: https://www.cv.nrao.edu/~sransom/web/Ch3.html eqn 3.118
@@ -121,6 +125,55 @@ def find_agn_withz( flux_per_SA_vec, redshift_vec, T_e=1e4, rf_array=np.array([0
     return( idx )
 
 ######################################################################
+## Functions for doing star formation / AGN separation
+
+def calculate_SFR( mycat ):
+    ## calculate luminosities so the SFR can be calculated
+    SFR_lum = radio_power(sub_peak,mycat['z_best'])
+    e_SFR_lum = radio_power( e_dr_sub_peak, mycat['z_best'] )
+    ## calculate the star formation rates ... 
+    ## Smith et al 2021:
+    ## log10(L150) = (0.9+-0.01)*log10(SFR)+(0.33+-0.04)*log10(M/10^10)+22.22+-0.02
+    ## log10(SFR) = ( log10(L150) - (22.22+-0.02) - (0.33+-0.04)*log10(M/10^10) ) / (0.9+-0.01)
+    SFR_lum[np.where(SFR_lum < 0)] = np.nan
+    nan_idx = np.unique(np.concatenate([np.where(np.isnan(SFR_lum))[0], np.where(np.isnan(mycat['Mass_cons']))[0]]))
+    SFR_lum[nan_idx] = 1.
+    mycat['Mass_cons'][nan_idx] = 1.
+    sfr = ( np.log10(SFR_lum) - 22.22 - 0.33*np.log10(mycat['Mass_cons']) ) / 0.9
+    ## re-set the nans
+    SFR_lum[nan_idx] = np.nan
+    mycat['Mass_cons'][nan_idx] = np.nan
+    sfr[nan_idx] = np.nan
+
+
+def do_SFR_AGN_separation( mycat ):
+    ## ONLY VALID FOR T_b IDENTIFIED AND UNRESOLVED
+    tb_idx = np.where( np.logical_and( mycat['tb_from'] > 0.0, mycat['Resolved'] == 'U' ) )[0]
+    not_excess_idx = np.where( mycat['Radio_excess'] < 0.7 )[0]
+    combined_idx = np.intersect1d(tb_idx,not_excess_idx)
+    ## separate star formation and AGN flux densities
+    ## initialise column for AGN
+    ## radio excess: total_flux_dr
+    agn_flux = mycat['Total_flux_dr']
+    e_agn_flux = mycat['E_Total_flux_dr']
+    ## tb_from > 0, unresolved, not radio excess: peak_flux
+    agn_flux[combined_idx] = mycat['Peak_flux'][combined_idx]
+    e_agn_flux[combined_idx] = mycat['E_Peak_flux'][combined_idx]
+    ## initialise column for SF
+    ## tb_from = 0: total_flux_dr
+    sf_flux = mycat['Total_flux_dr']
+    e_sf_flux = mycat['Total_flux_dr']    
+    ## tb_from > 0, unresolved, not radio excess: total_flux_dr - peak_flux
+    sf_flux[combined_idx] = mycat['Total_flux_dr'][combined_idx] - mycat['Peak_flux'][combined_idx]
+    e_sf_flux[combined_idx] = add_sub_error( mycat['E_Total_flux_dr'][combined_idx], mycat['E_Peak_flux'][combined_idx])
+    mycat.add_column( agn_flux, name='AGN_flux' )
+    mycat.add_column( e_agn_flux, name='E_AGN_flux' )
+    mycat.add_column( sf_flux, name='SF_flux' )
+    mycat.add_column( e_sf_flux, name='E_SF_flux' )
+    return( mycat )
+
+
+######################################################################
 ## Functions for calculating vmaxes
 
 def effective_area( rms_file ):
@@ -157,14 +210,14 @@ def effective_area( rms_file ):
         t.write( outfile, format='fits' )
     return( noise_bins, eff_area_deg2 )
 
-def get_source_vmax( power, power_to_flux_factor, V_DLs, completeness, fluxdens, solid_angle, noise_bins, noise_min, sigma_cut = 5. ):
+def get_source_vmax( power, scaling_factor, power_to_flux_factor, V_DLs, completeness, fluxdens, solid_angle, noise_bins, noise_min, sigma_cut = 5. ):
     ## find the flux at all possible redshifts
-    flux_at_z = power_to_flux_factor * power  
+    flux_at_z = power_to_flux_factor * power 
     ## find the maximum redshift at which it can be observed       
     noise_diff = np.where( flux_at_z >= sigma_cut*noise_min )[0]
     ## if this is in the middle of the redshift bin, use an index to limit to max redshift
     if len(noise_diff) < len(flux_at_z):
-        flux_at_z = power_to_flux_factor[noise_diff] * power
+        flux_at_z = power_to_flux_factor[noise_diff] * power 
         V_DLs = V_DLs[noise_diff]
     ## initialise some empty lists
     solid_angle_at_z = []
@@ -174,8 +227,9 @@ def get_source_vmax( power, power_to_flux_factor, V_DLs, completeness, fluxdens,
         ## find the solid angle for which this S(z) is observable
         idx = np.where(flux_at_z[j] >= sigma_cut*noise_bins)[0]
         solid_angle_at_z.append(solid_angle[np.max(idx)])
-        ## find the completeness correction for this S(z)
-        idx = np.where( np.abs(flux_at_z[j]-fluxdens) == np.min( np.abs(flux_at_z[j]-fluxdens) ) )[0]
+        ## find the completeness correction for this S(z), using the scaling factor to find the completeness for the galaxy, not the activity
+        comp_check = flux_at_z[j] * scaling_factor - fluxdens
+        idx = np.where( np.abs(comp_check) == np.min( np.abs(comp_check) ) )[0]
         completeness_at_z.append(completeness[idx[0]])
     ## calculate theta_z
     theta_sz = np.asarray(solid_angle_at_z) * np.asarray(completeness_at_z)
@@ -228,13 +282,22 @@ def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-
     ## calculate intrinsic powers: first convert from Jy to W/Hz/m^2
     fluxes = lotss[fluxcol] * 1e-26
     flux_errors = lotss[fluxerrcol] * 1e-26
+    agn_fluxes = lotss['AGN_flux'] * 1e-26
+    agn_flux_errors = lotss['E_AGN_flux'] * 1e-26
+    sf_fluxes = lotss['SF_flux'] * 1e-26
+    sf_flux_errors = lotss['E_SF_flux'] * 1e-26
     redshifts = lotss['Z_BEST']
     ## calculate the power
     tmp = cosmo.luminosity_distance(redshifts)
     ## convert to metres so units are consistent
     DL = tmp.to(u.m).value
-    power = 4. * np.pi * np.power( DL, 2. ) * fluxes / np.power( (1.+redshifts), (1+si) )
-    power_error = 4. * np.pi * np.power( DL, 2. ) * flux_errors / np.power( (1.+redshifts), (1+si) )
+    source_factors = 4. * np.pi * np.power( DL, 2. ) / np.power((1.+redshifts), (1+si))
+    power = source_factors * fluxes
+    power_error = source_factors * flux_errors
+    agn_power = source_factors * agn_fluxes
+    agn_power_error = source_factors * agn_flux_errors
+    sf_power = source_factors * sf_fluxes
+    sf_power_error = source_factors * sf_flux_errors
 
     ## calculate distances and volumes 
     zbins = np.arange(zmin,zmax+dz,dz)
@@ -251,8 +314,8 @@ def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-
 
     ## now loop over every source to get the vmax
     vmaxes = []
-    #vmaxes_lo = []
-    #vmaxes_up = []
+    agn_vmaxes = []
+    sf_vmaxes = []
     tmp = field.capitalize()
     pb = Bar('Processing', max=len(lotss))
     for i in np.arange(0,len(lotss)):
@@ -270,17 +333,24 @@ def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-
             completeness = completeness.filled(0)
         except:
             completeness = completeness
-
-        vmax = get_source_vmax( power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
-        #vmax_lo = get_source_vmax( power[i]-power_error[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
-        #vmax_up = get_source_vmax( power[i]+power_error[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
+        ## overall vmax
+        vmax = get_source_vmax( power[i], 1.0, power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
+        if agn_power[i] != power[i]:
+            agn_vmax = get_source_vmax( agn_power[i], power[i]/agn_power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
+        else:
+            agn_vmax = vmax
+        if sf_power[i] != power[i]:
+            sf_vmax = get_source_vmax( sf_power[i], power[i]/sf_power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )                
+        else:
+            sf_vmax = vmax
         vmaxes.append(vmax)
-        #vmaxes_lo.append(vmax_lo)
-        #vmaxes_up.append(vmax_up)
+        agn_vmaxes.append(agn_vmax)
+        sf_vmaxes.append(sf_vmax)
+      
         pb.next()
     pb.finish()
 
     lotss.add_column( vmaxes, name='vmax' )
-    #lotss.add_column( vmaxes_lo, name='vmax_lo' )
-    #lotss.add_column( vmaxes_up, name='vmax_up' )
+    lotss.add_column( agn_vmaxes, name='agn_vmax' )
+    lotss.add_column( sf_vmaxes, name='sf_vmax' )
     return( lotss )

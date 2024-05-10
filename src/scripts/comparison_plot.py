@@ -46,21 +46,39 @@ vmaxes = vstack([lockman_tmp,elais_tmp])
 redshift_bins = np.array([zmin,zmax])
 lum_bins = np.arange( 19.5, 27, 0.5 ) # + np.log10( np.power( (144./1400.), si ) )
 Lrad = radio_power( vmaxes['Total_flux_dr'], vmaxes['Z_BEST'], spectral_index=si )
+agn_Lrad = radio_power( vmaxes['AGN_flux'], vmaxes['Z_BEST'], spectral_index=si )
+sf_Lrad = radio_power( vmaxes['SF_flux'], vmaxes['Z_BEST'], spectral_index=si )
 log10_Lrad = np.log10(Lrad)
+agn_log10_Lrad = np.log10(agn_Lrad)
+sf_log10_Lrad = np.log10(sf_Lrad)
 
 rhos = []
-rhos_lo = []
-rhos_up = []
+agn_rhos = []
+sf_rhos = []
 for i in np.arange(1,len(lum_bins)):
     delta_log_L = lum_bins[i] - lum_bins[i-1]
     lum_idx = np.where(np.logical_and( log10_Lrad >= lum_bins[i-1], log10_Lrad < lum_bins[i] ) )[0]
+    agn_lum_idx = np.where(np.logical_and( agn_log10_Lrad >= lum_bins[i-1], agn_log10_Lrad < lum_bins[i] ) )[0]
+    sf_lum_idx = np.where(np.logical_and( sf_log10_Lrad >= lum_bins[i-1], sf_log10_Lrad < lum_bins[i] ) )[0]
     if len(lum_idx) > 0:
         rho = np.log10( np.sum( 1. / vmaxes['vmax'][lum_idx] ) / delta_log_L ) 
     else:
         rho = 0
+    if len(agn_lum_idx) > 0:
+        agn_rho = np.log10( np.sum( 1. / vmaxes['agn_vmax'][agn_lum_idx] ) / delta_log_L ) 
+    else:
+        agn_rho = 0
+    if len(sf_lum_idx) > 0:
+        sf_rho = np.log10( np.sum( 1. / vmaxes['sf_vmax'][sf_lum_idx] ) / delta_log_L ) 
+    else:
+        sf_rho = 0
     rhos.append(rho)
+    agn_rhos.append(agn_rho)
+    sf_rhos.append(sf_rho)
 
 lum_func = np.asarray(rhos)
+agn_lum_func = np.asarray(agn_rhos)
+sf_lum_func = np.asarray(sf_rhos)
 
 lum_bin_cens = lum_bins + 0.5*(lum_bins[1]-lum_bins[0])
 
@@ -74,6 +92,11 @@ plt.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Konda
 ## plot the lofar data, filtering zeros
 non_zero = np.where( lum_func != 0.0 )[0]
 plt.plot( lum_bin_cens[non_zero], lum_func[non_zero], 'o', color='red', label='data_corr' )
+non_zero = np.where( agn_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], 'o', color='purple', label='AGN' )
+non_zero = np.where( sf_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], 'o', color='pink', label='SF' )
+
 #plt.fill_between( RLF['Lmedian'], RLF['RLF_lo'], RLF['RLF_up'], color='green', alpha=0.5 )
 #plt.plot( RLF['Lmedian'], RLF['RLF'], 'o', color='green', label='data' )
 #plt.plot( RLF_corr['Lmedian'], RLF_corr['RLF'], 'o', color='red', label='data_corr' )

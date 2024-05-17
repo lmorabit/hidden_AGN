@@ -34,14 +34,13 @@ dependencies:
 
    # scripts that generate data files
    src/scripts/generateVmaxes.py:
-     - src/static/lockman_03_matched_inMOC_inHR.fits
-     - src/static/lockman_DR1_rms_masked.fits
      - src/static/kondapally_2022_table1.csv
      - src/static/cochrane_2023_tableA1.csv
+     - src/static/lockman_03_matched_inMOC_inHR.fits
+     - src/static/lockman_DR1_rms_masked.fits
+     - src/static/en1_03_matched_inMOC_inHR.fits
+     - src/static/en1_DR1_rms_masked.fits
    # scripts that generate figures
-   src/scripts/testplot.py:
-     - src/static/RLFS_50MYR_AGN.csv
-     - src/static/RLFS_50MYR_SF.csv
    src/scripts/comparison_plot.py:
      - src/data/lockman_6arcsec_vmaxes.fits
      - src/static/kondapally_2022_table2.csv
@@ -49,6 +48,8 @@ dependencies:
    src/scripts/completeness.py:
      - src/static/kondapally_2022_table1.csv
      - src/static/cochrane_2023_tableA1.csv
+     - src/static/kondapally_2022_table2.csv
+     - src/static/cochrane_2023_table1.csv
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 

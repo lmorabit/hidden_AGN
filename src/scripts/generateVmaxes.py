@@ -39,7 +39,7 @@ for field in fields:
     lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )
     lotss = do_SFR_AGN_separation( lotss )
     ## 6 arcsec vmaxes
-    outfits = field + '_6arcsec_vmaxes.fits'
+    outfits = field + '_vmaxes.fits'
     vmaxes = get_vmax( lotss, field, col_suffix='_dr', zmin=zmin, zmax=zmax, dz=dz, si=si, sigma_cut=sigma_cut, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally, test=False )
     vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
 

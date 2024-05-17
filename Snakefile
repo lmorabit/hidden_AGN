@@ -15,10 +15,10 @@ rule generateVmaxes:
 		"src/scripts/generateVmaxes.py"
 rule completeness:
 	input:
-		"src/static/cochrane_2023_table1.csv",
-		"src/static/cochrane_2023_tableA1.csv",
-		"src/static/kondapally_2022_table1.csv",
-		"src/static/kondapally_2022_table2.csv"
+                "src/static/cochrane_2023_table1.csv",
+                "src/static/cochrane_2023_tableA1.csv",
+                "src/static/kondapally_2022_table1.csv",
+                "src/static/kondapally_2022_table2.csv"
 	output:
 		"completeness.png"
 	conda:
@@ -27,10 +27,10 @@ rule completeness:
 		"src/scripts/completeness.py"
 rule comparison_plot:
         input:
-		"src/static/kondapally_2022_table2.csv",
-		"src/static/cochrane_2023_table1.csv",
-		"src/data/lockman_vmaxes.fits",
-	        "src/data/en1_vmaxes.fits"
+                "src/static/kondapally_2022_table2.csv",
+                "src/static/cochrane_2023_table1.csv",
+                "src/data/lockman_vmaxes.fits",
+                "src/data/en1_vmaxes.fits"
         output:
                 "mauch_sadler_RLFs.png"
         conda:

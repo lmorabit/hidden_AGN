@@ -33,6 +33,14 @@ def midpoint_rule( yvals, dx ):
     sum_vals = np.nansum( yvals * dx )
     return( sum_vals )
 
+def log10_when_zeros( vals ):
+    zero_idx = np.where( vals <= 0 )[0]
+    vals[zero_idx] = 1.
+    new_vals = np.log10(vals)
+    new_vals[zero_idx] = 0.
+    return(new_vals)
+    
+
 ######################################################################
 ## Functions for calculating brightness temp
 
@@ -127,26 +135,37 @@ def find_agn_withz( flux_per_SA_vec, redshift_vec, T_e=1e4, rf_array=np.array([0
 ######################################################################
 ## Functions for doing star formation / AGN separation
 
-def calculate_SFR( mycat ):
-    ## calculate luminosities so the SFR can be calculated
-    SFR_lum = radio_power(sub_peak,mycat['z_best'])
-    e_SFR_lum = radio_power( e_dr_sub_peak, mycat['z_best'] )
-    ## calculate the star formation rates ... 
+def calculate_SFR( SFR_lum, Mstar ):
     ## Smith et al 2021:
     ## log10(L150) = (0.9+-0.01)*log10(SFR)+(0.33+-0.04)*log10(M/10^10)+22.22+-0.02
     ## log10(SFR) = ( log10(L150) - (22.22+-0.02) - (0.33+-0.04)*log10(M/10^10) ) / (0.9+-0.01)
-    SFR_lum[np.where(SFR_lum < 0)] = np.nan
-    nan_idx = np.unique(np.concatenate([np.where(np.isnan(SFR_lum))[0], np.where(np.isnan(mycat['Mass_cons']))[0]]))
-    SFR_lum[nan_idx] = 1.
-    mycat['Mass_cons'][nan_idx] = 1.
-    sfr = ( np.log10(SFR_lum) - 22.22 - 0.33*np.log10(mycat['Mass_cons']) ) / 0.9
+
+    ## to avoid errors, don't calculate where SFR = 0
+    zero_idx = np.where( SFR_lum > 0 )[0]
+    ## to avoid errors, don't calculate where Mstar < 0
+    flagged_idx = np.where( Mstar > 0 )[0]
+    avoid_idx = np.where( np.logical_or( SFR_lum <= 0, Mstar < 0 ) )[0]
+    SFR_lum[avoid_idx] = 1.
+    Mstar[avoid_idx] = 1.
+    sfr = ( np.log10(SFR_lum) - 22.22 - 0.33*np.log10(Mstar) ) / 0.9
     ## re-set the nans
-    SFR_lum[nan_idx] = np.nan
-    mycat['Mass_cons'][nan_idx] = np.nan
-    sfr[nan_idx] = np.nan
+    sfr[avoid_idx] = np.nan
+    return(sfr)
 
 
 def do_SFR_AGN_separation( mycat ):
+    ## will need SED classifications
+    SFG_idx = np.where( mycat['Overall_class'] == 'SFG' )[0]
+    not_SFG_idx = np.asarray( [ i for i in np.arange(0,len(mycat)) if i not in SFG_idx ] )
+    
+    RG_idx = np.where( np.logical_or( mycat['Overall_class'] == 'HERG', mycat['Overall_class'] == 'LERG' ) )[0]
+    RQ_idx = np.where( mycat['Overall_class'] == 'RQAGN' )[0]
+    AGN_idx = np.union1d(RG_idx, RQ_idx)
+    not_AGN_idx = np.asarray( [ i for i in np.arange(0,len(mycat)) if i not in AGN_idx ] )
+
+    ## doing it this way includes unclassified ... 
+    #AGN_idx = np.asarray( [ i for i in np.arange(0,len(mycat)) if i not in SFG_idx ])
+
     ## ONLY VALID FOR T_b IDENTIFIED AND UNRESOLVED
     tb_idx = np.where( np.logical_and( mycat['tb_from'] > 0.0, mycat['Resolved'] == 'U' ) )[0]
     not_excess_idx = np.where( mycat['Radio_excess'] < 0.7 )[0]
@@ -154,16 +173,25 @@ def do_SFR_AGN_separation( mycat ):
     ## separate star formation and AGN flux densities
     ## initialise column for AGN
     ## radio excess: total_flux_dr
-    agn_flux = mycat['Total_flux_dr']
-    e_agn_flux = mycat['E_Total_flux_dr']
+    agn_flux = np.copy( mycat['Total_flux_dr'] )
+    e_agn_flux = np.copy( mycat['E_Total_flux_dr'] )
+    ## set the agn_flux and e_agn_flux to zero for non-agn
+    agn_flux[not_AGN_idx] = 0.
+    e_agn_flux[not_AGN_idx] = 0.
+
     ## tb_from > 0, unresolved, not radio excess: peak_flux
     agn_flux[combined_idx] = mycat['Peak_flux'][combined_idx]
     e_agn_flux[combined_idx] = mycat['E_Peak_flux'][combined_idx]
     ## initialise column for SF
     ## tb_from = 0: total_flux_dr
-    sf_flux = mycat['Total_flux_dr']
-    e_sf_flux = mycat['Total_flux_dr']    
+    sf_flux = np.copy( mycat['Total_flux_dr'] )
+    e_sf_flux = np.copy( mycat['Total_flux_dr'] )
+    ## set the sf_flux and e_agn_flux to zero for AGN
+    sf_flux[not_SFG_idx] = 0.
+    e_sf_flux[not_SFG_idx] = 0.
+
     ## tb_from > 0, unresolved, not radio excess: total_flux_dr - peak_flux
+    ## NOTE: if unclassified sources are T_b identified AGN, this will add them back in!
     sf_flux[combined_idx] = mycat['Total_flux_dr'][combined_idx] - mycat['Peak_flux'][combined_idx]
     e_sf_flux[combined_idx] = add_sub_error( mycat['E_Total_flux_dr'][combined_idx], mycat['E_Peak_flux'][combined_idx])
     mycat.add_column( agn_flux, name='AGN_flux' )
@@ -335,11 +363,15 @@ def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-
             completeness = completeness
         ## overall vmax
         vmax = get_source_vmax( power[i], 1.0, power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
-        if agn_power[i] != power[i]:
+        if agn_power[i] == 0:
+            agn_vmax = 0.*np.power(u.Mpc,3)
+        elif agn_power[i] != power[i]:
             agn_vmax = get_source_vmax( agn_power[i], power[i]/agn_power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )
         else:
             agn_vmax = vmax
-        if sf_power[i] != power[i]:
+        if sf_power[i] == 0.:
+            sf_vmax = 0.*np.power(u.Mpc,3)
+        elif sf_power[i] != power[i]:
             sf_vmax = get_source_vmax( sf_power[i], power[i]/sf_power[i], power_to_flux_factor, V_DLs, completeness, completeness_fluxDens, solid_angle, noise_bins, noise_min, sigma_cut = sigma_cut )                
         else:
             sf_vmax = vmax

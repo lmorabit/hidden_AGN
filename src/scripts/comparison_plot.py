@@ -125,14 +125,14 @@ lum_bin_cens = lum_bins[0:-1] + 0.5*(lum_bins[1]-lum_bins[0])
 
 fsizex = 11
 fsizey = 5
-sbsizex = 0.5
-sbsizey = 0.7
+sbsizex = 0.8
+sbsizey = 0.8
 plxlims = (19,27)
 plylims = (-7.5,-1)
 
 fig = plt.figure( figsize=(fsizex,fsizey) )
 ## start first panel
-p1 = plt.axes([0.05,0.05,sbsizex*fsizey/fsizex,sbsizey])
+p1 = plt.axes([0.1,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
 p1.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 p1.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')

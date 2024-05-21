@@ -132,7 +132,7 @@ plylims = (-7.5,-1)
 
 fig = plt.figure( figsize=(fsizex,fsizey) )
 ## start first panel
-p1 = plt.axes([0.015,0.05,sbsizex*fsizey/fsizex,sbsizey])
+p1 = plt.axes([0.05,0.05,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
 p1.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 p1.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')

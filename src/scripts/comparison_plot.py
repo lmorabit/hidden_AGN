@@ -143,7 +143,7 @@ p1.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondap
 #p1.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color='purple', label='AGN activity' )
 #non_zero = np.where( sf_lum_func != 0.0 )[0]
 #p1.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF activity' )
-#non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
+non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
 p1.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color='orange', label='AGN galaxies' )
 non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
 p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color='green', label='SF galaxies' )

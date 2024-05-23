@@ -6,8 +6,9 @@ from astropy.table import Table, Column, join
 from helper_functions import *
 from astropy.io import fits
 import os
-from astropy.cosmology import WMAP9 as cosmo
-## WMAP9 is Hinshaw et al. 2013, H_0=69.3, Omega=0.287
+## cosmology to match Kondapally and Cochrane
+from astropy.cosmology import FlatLambdaCDM
+cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
 import time
 
 #########################################

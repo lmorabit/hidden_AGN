@@ -1,5 +1,4 @@
 import numpy as np
-from astropy.cosmology import WMAP9 as cosmo
 from astropy.table import Table, join
 import astropy.units as u
 from progress.bar import Bar
@@ -7,6 +6,9 @@ import paths
 from astropy.stats import median_absolute_deviation as apy_mad
 import os
 from astropy.io import fits
+## cosmology to match Kondapally and Cochrane
+from astropy.cosmology import FlatLambdaCDM
+cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
 
 ## error propagation functions
 def add_sub_error( eX, eY ):

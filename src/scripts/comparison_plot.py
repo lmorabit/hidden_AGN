@@ -53,7 +53,7 @@ AGN_idx = RG_idx
 
 ## RLF bins
 redshift_bins = np.array([zmin,zmax])
-lum_bins = np.arange( 20.5, 27, 0.5 ) # + np.log10( np.power( (144./1400.), si ) )
+lum_bins = np.arange( 20.5, 27, 0.3 ) # + np.log10( np.power( (144./1400.), si ) )
 
 ## get radio luminosities
 Lrad = radio_power( vmaxes['Total_flux_dr'], vmaxes['Z_BEST'], spectral_index=si )
@@ -81,7 +81,8 @@ sf_rhos = []
 gal_sfg_rhos = []
 gal_rg_rhos = []
 for i in np.arange(1,len(lum_bins)):
-    delta_log_L = lum_bins[i] - lum_bins[i-1]
+    ## change base from 10 to e to match units in Kondapally and Cochrane
+    delta_log_L = (lum_bins[i] - lum_bins[i-1]) * np.log(10.)
     lum_idx = np.where(np.logical_and( log10_Lrad >= lum_bins[i-1], log10_Lrad < lum_bins[i] ) )[0]
     agn_lum_idx = np.where(np.logical_and( agn_log10_Lrad >= lum_bins[i-1], agn_log10_Lrad < lum_bins[i] ) )[0]
     sf_lum_idx = np.where(np.logical_and( sf_log10_Lrad >= lum_bins[i-1], sf_log10_Lrad < lum_bins[i] ) )[0]

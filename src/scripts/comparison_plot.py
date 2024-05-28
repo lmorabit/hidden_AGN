@@ -124,7 +124,7 @@ gal_sf_lum_func = np.asarray(gal_sfg_rhos)
 lum_bin_cens = lum_bins[0:-1] + 0.5*(lum_bins[1]-lum_bins[0])
 
 
-fsizex = 11
+fsizex = 15
 fsizey = 5
 sbsizex = 0.8
 sbsizey = 0.8
@@ -159,16 +159,12 @@ p2 = plt.axes([0.1+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 p2.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 p2.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
 ## plot the lofar data, filtering zeros
-non_zero = np.where( lum_func != 0.0 )[0]
-p2.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
+#non_zero = np.where( lum_func != 0.0 )[0]
+#p2.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
 non_zero = np.where( agn_lum_func != 0.0 )[0]
 p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color='purple', label='AGN activity' )
 non_zero = np.where( sf_lum_func != 0.0 )[0]
 p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF activity' )
-#non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
-#p1.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color='orange', label='AGN galaxies' )
-#non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
-#p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color='green', label='SF galaxies' )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)

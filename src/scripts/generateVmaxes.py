@@ -43,7 +43,7 @@ for field in fields:
     lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )
     lotss = do_SFR_AGN_separation( lotss )
     ## calculate vmaxes
-    for i in np.arange(0,len(zbin_ztarts)):
+    for i in np.arange(0,len(zbin_starts)):
         zmin = zbin_starts[i]
         zmax = zbin_ends[i]
         outfits = field + '_vmaxes_zmin'+str(zmin)+'_zmax'+str(zmax)+'.fits'

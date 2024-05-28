@@ -15,7 +15,7 @@ matplotlib.rcParams['axes.labelsize'] = 'large'
 ## set up some colours
 n = 255
 mycols = plt.cm.viridis(np.linspace(0, 1,n))
-mycols_m = plt.cm.magma(np.linspace(0, 1,n))
+mycols_m = plt.cm.inferno(np.linspace(0, 1,n))
 
 ##############################################################
 
@@ -124,72 +124,101 @@ gal_sf_lum_func = np.asarray(gal_sfg_rhos)
 lum_bin_cens = lum_bins[0:-1] + 0.5*(lum_bins[1]-lum_bins[0])
 
 
-fsizex = 15
+fsizex = 14
 fsizey = 5
 sbsizex = 0.8
 sbsizey = 0.8
-plxlims = (19,27)
-plylims = (-7.5,-1)
+plxlims = (20.1,27)
+plylims = (-6.5,-1)
+
+## set some colors
+kond = 'black'
+coch = 'gray'
+sfggalc = mycols[80]
+agngalc = mycols_m[120]
+sfc = mycols[180]
+agnc = mycols_m[180]
 
 fig = plt.figure( figsize=(fsizex,fsizey) )
-## start first panel -- this is Cochrane and Kondapally vs. the 6 arcsec but in the high resolution area
-p1 = plt.axes([0.1,0.1,sbsizex*fsizey/fsizex,sbsizey])
+## Left panel: Showing that we reproduce the RLFs for galaxies even when using smaller area
+p1 = plt.axes([0.05,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
-p1.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
-p1.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
-## plot the lofar data, filtering zeros
-#non_zero = np.where( lum_func != 0.0 )[0]
-#p1.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
-#non_zero = np.where( agn_lum_func != 0.0 )[0]
-#p1.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color='purple', label='AGN activity' )
-#non_zero = np.where( sf_lum_func != 0.0 )[0]
-#p1.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF activity' )
+p1.plot( cochrane['logL150'], cochrane['logPhi'], color=coch, label='Cochrane et al. (2023)', linewidth=2 )
+p1.plot( kondapally['logL150'], kondapally['logPhi'], color=kond, label='Kondapally et al. (2022)', linewidth=2)
+## plot the new data, filtering zeros
 non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
-p1.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color='orange', label='AGN galaxies' )
+p1.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color=agngalc, label='AGN galaxies', linewidth=3, linestyle='dotted' )
 non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
-p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color='green', label='SF galaxies' )
+p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color=sfggalc, label='SF galaxies', linewidth=3, linestyle='dotted' )
 p1.axes.set_xlim(plxlims)
 p1.axes.set_ylim(plylims)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
-p1.legend()
 
-p2 = plt.axes([0.1+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
+handles, labels = p1.get_legend_handles_labels()
+order = [3,2,0,1]
+p1.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
+
+
+## Middle panel: same as left panel but new data by activity now
+p2 = plt.axes([0.05+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
-p2.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
-p2.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
+p2.plot( cochrane['logL150'], cochrane['logPhi'], color=coch, label='Cochrane et al. (2023)', linewidth=2)
+p2.plot( kondapally['logL150'], kondapally['logPhi'], color=kond, label='Kondapally et al. (2022)', linewidth=2)
 ## plot the lofar data, filtering zeros
 #non_zero = np.where( lum_func != 0.0 )[0]
 #p2.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
 non_zero = np.where( agn_lum_func != 0.0 )[0]
-p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color='purple', label='AGN activity' )
+p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3, alpha=0.75 )
 non_zero = np.where( sf_lum_func != 0.0 )[0]
-p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF activity' )
+p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 #p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
-p2.legend()
+handles, labels = p2.get_legend_handles_labels()
+order = [3,2,0,1]
+p2.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
+## Right panel (top): RLFs using new data, galaxies and activity
+p3 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
+non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
+p3.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color=agngalc, label='AGN galaxies', linewidth=3, alpha=0.75, linestyle='dotted' )
+non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
+p3.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color=sfggalc, label='SF galaxies', linewidth=3, alpha=0.75, linestyle='dotted' )
+non_zero = np.where( agn_lum_func != 0.0 )[0]
+p3.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3, alpha=0.75 )
+non_zero = np.where( sf_lum_func != 0.0 )[0]
+p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
+p3.axes.set_xlim(plxlims)
+p3.axes.set_ylim(plylims)
+p3.xaxis.set_visible(False)
+p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+handles, labels = p3.get_legend_handles_labels()
+order = [3,1,2,0]
+p3.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
+## Right panel (bottom): ratio of the RLFs by galaxies and activity
+p4 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
+p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
+non_zero_idx = np.where( np.logical_and( agn_lum_func != 0, gal_agn_lum_func != 0 ) )[0]
+ratio = np.power(10., agn_lum_func[non_zero_idx]) / np.power( 10., gal_agn_lum_func[non_zero_idx]) 
+p4.plot( lum_bin_cens[non_zero_idx], ratio, color=agnc, label='AGN', linewidth=3 )
+non_zero_idx = np.where( np.logical_and( sf_lum_func != 0, gal_sf_lum_func != 0 ) )[0]
+ratio = np.power(10., sf_lum_func[non_zero_idx] ) / np.power( 10., gal_sf_lum_func[non_zero_idx] )
+p4.plot( lum_bin_cens[non_zero_idx], ratio, color=sfc, label='SF', linewidth=3 )
+p4.axes.set_xlim(plxlims)
+#p4.axes.set_ylim((0.8,1.1))
+p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p4.set_ylabel('Activity / Galaxy')
+p4.legend()
 fig.savefig(paths.figures / 'mauch_sadler_RLFs.png',dpi=300)
 fig.clear()
 plt.close()
 
-## ratio of activity to galaxy as function of luminosity
-fig = plt.figure( figsize=(5,5) )
-plt.plot( (19,27), (1,1), color='gray' )
-non_zero_idx = np.where( np.logical_and( agn_lum_func != 0, gal_agn_lum_func != 0 ) )[0]
-plt.plot( lum_bin_cens[non_zero_idx], agn_lum_func[non_zero_idx] / gal_agn_lum_func[non_zero_idx], color='orange', label='AGN' )
-non_zero_idx = np.where( np.logical_and( sf_lum_func != 0, gal_sf_lum_func != 0 ) )[0]
-plt.plot( lum_bin_cens[non_zero_idx], sf_lum_func[non_zero_idx] / gal_sf_lum_func[non_zero_idx], color='green', label='SF' )
-plt.xlim((19,27))
-plt.ylim((0.7,1.1))
-plt.legend()
-plt.savefig(paths.figures / 'RLF_ratios.png', dpi=300)
-fig.clear()
-plt.close()
+
 
 ## SED SFR vs radio luminosity before and after correcting for AGN component
 fig = plt.figure( figsize=(5,5) )

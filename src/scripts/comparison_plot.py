@@ -154,7 +154,7 @@ p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 p1.legend()
 
-p2 = plt.axes([0.6,0.1,sbsizex*fsizey/fsizex,sbsizey])
+p2 = plt.axes([0.1+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
 p2.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
 p2.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
@@ -171,8 +171,9 @@ p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF 
 #p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color='green', label='SF galaxies' )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
+p2.yaxis.set_visible(False)
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+#p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 p2.legend()
 
 

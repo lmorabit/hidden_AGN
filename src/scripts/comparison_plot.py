@@ -153,6 +153,29 @@ p1.axes.set_ylim(plylims)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 p1.legend()
+
+p2 = plt.axes([0.6,0.6,sbsizex*fsizey/fsizex,sbsizey])
+## plot the previous data
+p2.plot( cochrane['logL150'], cochrane['logPhi'], color='blue', label='Cochrane et al. 2023, SFGs')
+p2.plot( kondapally['logL150'], kondapally['logPhi'], color='red', label='Kondapally et al. 2022, RLAGNs')
+## plot the lofar data, filtering zeros
+non_zero = np.where( lum_func != 0.0 )[0]
+p2.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
+non_zero = np.where( agn_lum_func != 0.0 )[0]
+p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color='purple', label='AGN activity' )
+non_zero = np.where( sf_lum_func != 0.0 )[0]
+p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color='pink', label='SF activity' )
+#non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
+#p1.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color='orange', label='AGN galaxies' )
+#non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
+#p1.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color='green', label='SF galaxies' )
+p2.axes.set_xlim(plxlims)
+p2.axes.set_ylim(plylims)
+p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+p2.legend()
+
+
 fig.savefig(paths.figures / 'mauch_sadler_RLFs.png',dpi=300)
 fig.clear()
 plt.close()

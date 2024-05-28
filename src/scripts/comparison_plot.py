@@ -218,6 +218,67 @@ fig.savefig(paths.figures / 'deep_fields_RLFs.png',dpi=300)
 fig.clear()
 plt.close()
 
+'''
+Redshift bins
+
+Rohit:
+0.5 - 1.0
+1.0 - 1.5
+1.5 - 2.0
+2.0 - 2.5
+
+
+Rachael:
+0.1 - 0.4 
+0.4 - 0.6 
+0.6 - 0.8
+0.8 - 1.0 
+1.0 - 1.3
+1.3 - 1.6
+1.6 - 2.0 
+2.0 - 2.5
+2.5 - 3.3
+3.3 - 4.6
+4.6 - 5.7
+
+'''
+
+
+## read in SIMBA
+Simba_SF = Table.read( paths.static / 'RLFS_50MYR_SF.csv', format='csv', delimiter=',' )
+Simba_AGN = Table.read( paths.static / 'RLFS_50MYR_AGN.csv', format='csv', delimiter=',' )
+## shift using spectral index
+Simba_SF['x']  = Simba_SF['x'] + np.log10( np.power( (144./1400.), si ) )
+Simba_AGN['x']  = Simba_AGN['x'] + np.log10( np.power( (144./1400.), si ) )
+
+fig = plt.figure( figsize=(5,5) )
+## plot simba
+#plt.plot( Simba_SF['x'], Simba_SF['Curve1']+np.log10(np.log(10)), color='green', linewidth=2.5, label='Simba SF' )
+#plt.plot( Simba_AGN['x'], Simba_AGN['Curve2']+np.log10(np.log(10)), color='blue', linewidth=2.5, label='Simba AGN' )
+
+plt.plot( Simba_SF['x'], Simba_SF['Curve1'], color='green', linewidth=2.5, label='Simba SF' )
+plt.plot( Simba_AGN['x'], Simba_AGN['Curve2'], color='blue', linewidth=2.5, label='Simba AGN' )
+
+
+non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color=agngalc, label='AGN galaxies', linewidth=3, linestyle='dotted' )
+non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color=sfggalc, label='SF galaxies', linewidth=3, linestyle='dotted' )
+
+non_zero = np.where( agn_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3, alpha=0.75 )
+non_zero = np.where( sf_lum_func != 0.0 )[0]
+plt.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
+plt.xlim(plxlims)
+plt.ylim(plylims)
+plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+plt.ylabel('log('+r'$\Phi$'+' [mag'+r'$^{-1}$'+' Mpc'+r'$^{-3}$'+'])')
+plt.legend()
+plt.savefig(paths.figures / 'test.png',dpi=300)
+fig.clear()
+
+
+
 
 
 ## SED SFR vs radio luminosity before and after correcting for AGN component

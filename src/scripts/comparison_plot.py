@@ -214,7 +214,7 @@ p4.axes.set_xlim(plxlims)
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p4.set_ylabel('Activity / Galaxy')
 p4.legend()
-fig.savefig(paths.figures / 'mauch_sadler_RLFs.png',dpi=300)
+fig.savefig(paths.figures / 'deep_fields_RLFs.png',dpi=300)
 fig.clear()
 plt.close()
 

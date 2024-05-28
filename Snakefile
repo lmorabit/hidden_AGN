@@ -32,7 +32,7 @@ rule comparison_plot:
                 "src/data/lockman_vmaxes.fits",
                 "src/data/en1_vmaxes.fits"
         output:
-                "mauch_sadler_RLFs.png"
+                "deep_fields_RLFs.png"
         conda:
                 "environment.yml"
         script:

@@ -31,8 +31,8 @@ cochrane = Table.read( paths.static / 'cochrane_2023_table1.csv', format='csv', 
 kondapally = Table.read( paths.static / 'kondapally_2022_table2.csv', format='csv', delimiter=',' )
 
 ## read in vmaxes
-lockman_vmaxes = Table.read( paths.data / 'lockman_vmaxes.fits', format='fits' )
-elais_vmaxes = Table.read( paths.data / 'en1_vmaxes.fits', format='fits' )
+lockman_vmaxes = Table.read( paths.data / 'lockman_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
+elais_vmaxes = Table.read( paths.data / 'en1_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
 
 ## combine these into a single catalogue for plotting
 keep_cols = ['Total_flux_dr','Z_BEST','vmax','agn_vmax','sf_vmax','AGN_flux','SF_flux', 'Overall_class','Mass_cons','SFR_cons']
@@ -188,9 +188,9 @@ p3.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color=agngalc, labe
 non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
 p3.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color=sfggalc, label='SF galaxies', linewidth=3, alpha=0.75, linestyle='dotted' )
 non_zero = np.where( agn_lum_func != 0.0 )[0]
-p3.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3, alpha=0.75 )
+p3.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3 )
 non_zero = np.where( sf_lum_func != 0.0 )[0]
-p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
+p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3 )
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
@@ -253,11 +253,13 @@ Simba_AGN['x']  = Simba_AGN['x'] + np.log10( np.power( (144./1400.), si ) )
 
 fig = plt.figure( figsize=(5,5) )
 ## plot simba
-#plt.plot( Simba_SF['x'], Simba_SF['Curve1']+np.log10(np.log(10)), color='green', linewidth=2.5, label='Simba SF' )
-#plt.plot( Simba_AGN['x'], Simba_AGN['Curve2']+np.log10(np.log(10)), color='blue', linewidth=2.5, label='Simba AGN' )
+# mag = -2.5 * Lum + zeropoint
+# so Lum = mag / -2.5
+plt.plot( Simba_SF['x'], (Simba_SF['Curve1']+np.log10(2.5)), color='green', linewidth=2.5, label='Simba SF' )
+plt.plot( Simba_AGN['x'], (Simba_AGN['Curve2']+np.log10(2.5)), color='blue', linewidth=2.5, label='Simba AGN' )
 
-plt.plot( Simba_SF['x'], Simba_SF['Curve1'], color='green', linewidth=2.5, label='Simba SF' )
-plt.plot( Simba_AGN['x'], Simba_AGN['Curve2'], color='blue', linewidth=2.5, label='Simba AGN' )
+#plt.plot( Simba_SF['x'], Simba_SF['Curve1'], color='green', linewidth=2.5, label='Simba SF' )
+#plt.plot( Simba_AGN['x'], Simba_AGN['Curve2'], color='blue', linewidth=2.5, label='Simba AGN' )
 
 
 non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
@@ -271,8 +273,9 @@ non_zero = np.where( sf_lum_func != 0.0 )[0]
 plt.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
 plt.xlim(plxlims)
 plt.ylim(plylims)
-plt.xlabel('log('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-plt.ylabel('log('+r'$\Phi$'+' [mag'+r'$^{-1}$'+' Mpc'+r'$^{-3}$'+'])')
+plt.xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+plt.ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+#plt.ylabel('log('+r'$\Phi$'+' [mag'+r'$^{-1}$'+' Mpc'+r'$^{-3}$'+'])')
 plt.legend()
 plt.savefig(paths.figures / 'test.png',dpi=300)
 fig.clear()

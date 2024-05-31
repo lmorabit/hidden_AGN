@@ -47,10 +47,11 @@ for field in fields:
         zmin = zbin_starts[i]
         zmax = zbin_ends[i]
         outfits = field + '_vmaxes_zmin'+str(zmin)+'_zmax'+str(zmax)+'.fits'
-        vmaxes = get_vmax( lotss, field, col_suffix='_dr', zmin=zmin, zmax=zmax, dz=dz, si=si, sigma_cut=sigma_cut, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally, test=False )
-        vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
-
-    
+        if not os.path.exists( paths.data / outfits ):
+            vmaxes = get_vmax( lotss, field, col_suffix='_dr', zmin=zmin, zmax=zmax, dz=dz, si=si, sigma_cut=sigma_cut, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally, test=False )
+            vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
+        else:
+            print('File {:s} already exists! If you want to regenerate, please delete output file and build again.'.format( paths.data / outfits ) )
 
 
 ## uncertainties done by bootstrapping. From Kondapally et al.:

@@ -330,7 +330,8 @@ def get_vmax( lotss, field, col_suffix='', zmin=0.003, zmax=0.3, dz=0.0001, si=-
     sf_power_error = source_factors * sf_flux_errors
 
     ## calculate distances and volumes 
-    zbins = np.arange(zmin,zmax+dz,dz)
+    nbins = int(round((zmax+dz-zmin)/dz))
+    zbins = np.arange(0,nbins)*dz+zmin
     tmp = cosmo.comoving_volume(zbins)  ## these are in Mpc3
     V_DLs = tmp[1:] - tmp[0:-1] ## length of one per bin
     zbin_cens = np.arange(zmin+0.5*dz,zmax,dz)

@@ -30,8 +30,9 @@ kondapally = Table.read( paths.static / 'kondapally_2022_table1.csv', format='cs
 
 fields = ['lockman', 'en1']
 
-zbin_starts = [ 0.003, 0.5, 1.0, 1.5, 2.0, 0.1, 0.4, 0.6, 0.8, 1.0, 1.3, 1.6, 2.5, 3.3, 4.6 ]
-zbin_ends = [ 0.3, 1.0, 1.5, 2.0, 2.5, 0.4, 0.6, 0.8, 1.0, 1.3, 1.6, 2.0, 3.3, 4.6, 5.7 ]
+t = Table.read( paths.static / 'redshift_bins.csv', format='csv' )
+zbin_starts = t['zbin_starts']
+zbin_ends = t['zbin_ends']
 
 for field in fields:
     print('Starting with field: {:s}'.format(field))
@@ -51,7 +52,7 @@ for field in fields:
             vmaxes = get_vmax( lotss, field, col_suffix='_dr', zmin=zmin, zmax=zmax, dz=dz, si=si, sigma_cut=sigma_cut, rms_image=rms_image, cochrane=cochrane, kondapally=kondapally, test=False )
             vmaxes.write( paths.data / outfits, format='fits', overwrite=True )
         else:
-            print('File {:s} already exists! If you want to regenerate, please delete output file and build again.'.format( paths.data / outfits ) )
+            print('File {:s} already exists! If you want to regenerate, please delete output file and build again.'.format( str(paths.data / outfits) ) )
 
 
 ## uncertainties done by bootstrapping. From Kondapally et al.:

@@ -202,6 +202,93 @@ def do_SFR_AGN_separation( mycat ):
     mycat.add_column( e_sf_flux, name='E_SF_flux' )
     return( mycat )
 
+######################################################################
+## Functions for calculating RLFs
+
+def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
+    ## get indices for galaxy identifications
+    SFG_idx = np.where( vmaxes['Overall_class'] == 'SFG' )[0]
+    Cochrane_SFG_idx = np.where( np.logical_or( vmaxes['Overall_class'] == 'SFG', vmaxes['Overall_class'] == 'RQAGN' ) )[0]
+    ## set the SF galaxy index to match Cochrane's selection
+    SFG_idx = Cochrane_SFG_idx
+
+    RG_idx = np.where( np.logical_or( vmaxes['Overall_class'] == 'HERG', vmaxes['Overall_class'] == 'LERG' ) )[0]
+    RQ_idx = np.where( vmaxes['Overall_class'] == 'RQAGN' )[0]
+    AGN_idx = np.union1d(RG_idx, RQ_idx)
+    ## set the AGN galaxy index to match Kondapally's selection
+    AGN_idx = RG_idx
+
+    ## RLF bins
+    redshift_bins = np.array([zmin,zmax])
+    lum_bins = np.arange( lmin, lmax, dl ) # + np.log10( np.power( (144./1400.), si ) )
+
+    ## get radio luminosities
+    Lrad = radio_power( vmaxes['Total_flux_dr'], vmaxes['Z_BEST'], spectral_index=si )
+    agn_Lrad = radio_power( vmaxes['AGN_flux'], vmaxes['Z_BEST'], spectral_index=si )
+    sf_Lrad = radio_power( vmaxes['SF_flux'], vmaxes['Z_BEST'], spectral_index=si )
+    ## calculate the SFR
+    sfrs = calculate_SFR( sf_Lrad, vmaxes['Mass_cons'] )
+
+    ## take the log
+    log10_Lrad = np.log10(Lrad)
+    agn_log10_Lrad = log10_when_zeros(agn_Lrad)
+    sf_log10_Lrad = log10_when_zeros(sf_Lrad)
+
+    ## by galaxy
+    gal_sfg_log10_Lrad = log10_Lrad[SFG_idx]
+    gal_rg_log10_Lrad = log10_Lrad[AGN_idx]
+    gal_sfg_vmax = vmaxes['vmax'][SFG_idx]
+    gal_rg_vmax = vmaxes['vmax'][AGN_idx]
+
+
+    ## calculate RLFs
+    rhos = []
+    agn_rhos = []
+    sf_rhos = []
+    gal_sfg_rhos = []
+    gal_rg_rhos = []
+    for i in np.arange(1,len(lum_bins)):
+        ## change base from 10 to e to match units in Kondapally and Cochrane
+        delta_log_L = (lum_bins[i] - lum_bins[i-1]) * np.log(10.)
+        lum_idx = np.where(np.logical_and( log10_Lrad >= lum_bins[i-1], log10_Lrad < lum_bins[i] ) )[0]
+        agn_lum_idx = np.where(np.logical_and( agn_log10_Lrad >= lum_bins[i-1], agn_log10_Lrad < lum_bins[i] ) )[0]
+        sf_lum_idx = np.where(np.logical_and( sf_log10_Lrad >= lum_bins[i-1], sf_log10_Lrad < lum_bins[i] ) )[0]
+        gal_sfg_idx = np.where( np.logical_and( gal_sfg_log10_Lrad >= lum_bins[i-1], gal_sfg_log10_Lrad < lum_bins[i] ) )[0]
+        gal_rg_idx = np.where( np.logical_and( gal_rg_log10_Lrad >= lum_bins[i-1], gal_rg_log10_Lrad < lum_bins[i] ) )[0]
+        if len(lum_idx) > 0:
+            rho = np.log10( np.sum( 1. / vmaxes['vmax'][lum_idx] ) / delta_log_L ) 
+        else:
+            rho = 0
+        if len(agn_lum_idx) > 0:
+            agn_rho = np.log10( np.sum( 1. / vmaxes['agn_vmax'][agn_lum_idx] ) / delta_log_L ) 
+        else:
+            agn_rho = 0
+        if len(sf_lum_idx) > 0:
+            sf_rho = np.log10( np.sum( 1. / vmaxes['sf_vmax'][sf_lum_idx] ) / delta_log_L ) 
+        else:
+            sf_rho = 0
+        if len(gal_sfg_idx) > 0:
+            gal_sf_rho = np.log10( np.sum( 1. / gal_sfg_vmax[gal_sfg_idx] ) / delta_log_L )
+        else:
+            gal_sf_rho = 0
+        if len(gal_rg_idx) > 0:
+            gal_rg_rho = np.log10( np.sum( 1. / gal_rg_vmax[gal_rg_idx] ) / delta_log_L )
+        else:
+            gal_rg_rho = 0
+
+        rhos.append(rho)
+        agn_rhos.append(agn_rho)
+        sf_rhos.append(sf_rho)
+        gal_sfg_rhos.append(gal_sf_rho)
+        gal_rg_rhos.append(gal_rg_rho)
+
+    lum_func = np.asarray(rhos)
+    agn_lum_func = np.asarray(agn_rhos)
+    sf_lum_func = np.asarray(sf_rhos)
+    gal_agn_lum_func = np.asarray(gal_rg_rhos)
+    gal_sf_lum_func = np.asarray(gal_sfg_rhos)
+    return( lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func )
+
 
 ######################################################################
 ## Functions for calculating vmaxes

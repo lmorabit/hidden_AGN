@@ -16,3 +16,5 @@
 </p>
 
 An open source scientific article created using the [showyourwork](https://github.com/showyourwork/showyourwork) workflow.
+
+Please note that the generateVmaxes.py script will take up to a day to run. It is provided here for reproducibility but is not included in the workflow.

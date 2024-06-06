@@ -30,7 +30,7 @@ t = Table.read( paths.static / 'redshift_bins.csv', format='csv' )
 zbin_starts = t['zbin_starts']
 zbin_ends = t['zbin_ends']
 
-fields = ['lockman'] # ,'en1']
+fields = ['lockman','en1']
 
 z_lum_bins = []
 z_lum_func = []

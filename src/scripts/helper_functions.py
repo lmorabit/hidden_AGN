@@ -256,23 +256,43 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
         gal_sfg_idx = np.where( np.logical_and( gal_sfg_log10_Lrad >= lum_bins[i-1], gal_sfg_log10_Lrad < lum_bins[i] ) )[0]
         gal_rg_idx = np.where( np.logical_and( gal_rg_log10_Lrad >= lum_bins[i-1], gal_rg_log10_Lrad < lum_bins[i] ) )[0]
         if len(lum_idx) > 0:
-            rho = np.log10( np.sum( 1. / vmaxes['vmax'][lum_idx] ) / delta_log_L ) 
+            sumvmax = np.sum( vmaxes['vmax'][lum_idx] )
+            if sumvmax > 0:
+                rho = np.log10( (1./sumvmax) / delta_log_L )
+            else:
+                rho = 0
         else:
             rho = 0
         if len(agn_lum_idx) > 0:
-            agn_rho = np.log10( np.sum( 1. / vmaxes['agn_vmax'][agn_lum_idx] ) / delta_log_L ) 
+            sumvmax = np.sum( vmaxes['agn_vmax'][agn_lum_idx] )
+            if sumvmax > 0:
+                agn_rho = np.log10( ( 1. / sumvmax ) / delta_log_L ) 
+            else:
+                agn_rho = 0
         else:
             agn_rho = 0
         if len(sf_lum_idx) > 0:
-            sf_rho = np.log10( np.sum( 1. / vmaxes['sf_vmax'][sf_lum_idx] ) / delta_log_L ) 
+            sumvmax = np.sum( vmaxes['sf_vmax'][sf_lum_idx] )
+            if sumvmax > 0:
+                sf_rho = np.log10( ( 1. / sumvmax ) / delta_log_L ) 
+            else:
+                sf_rho = 0
         else:
             sf_rho = 0
         if len(gal_sfg_idx) > 0:
-            gal_sf_rho = np.log10( np.sum( 1. / gal_sfg_vmax[gal_sfg_idx] ) / delta_log_L )
+            sumvmax = np.sum( gal_sfg_vmax[gal_sfg_idx] )
+            if sumvmax > 0:
+                gal_sf_rho = np.log10( ( 1. / sumvmax ) / delta_log_L )
+            else:
+                gal_sf_rho = 0
         else:
             gal_sf_rho = 0
         if len(gal_rg_idx) > 0:
-            gal_rg_rho = np.log10( np.sum( 1. / gal_rg_vmax[gal_rg_idx] ) / delta_log_L )
+            sumvmax = np.sum( gal_rg_vmax[gal_rg_idx] )
+            if sumvmax > 0:
+                gal_rg_rho = np.log10( ( 1. / sumvmax ) / delta_log_L )
+            else:
+                gal_rg_rho = 0
         else:
             gal_rg_rho = 0
 

@@ -72,11 +72,14 @@ plylims = (-7.5,-1)
 
 zcols_sf = mycols[np.arange(0,len(z_lum_bins))*int(n/len(z_lum_bins))]
 
+## some bins are not well constrained, use this value as a cutoff:
+cutoff = -2
+
 fig = plt.figure( figsize=(fsizex,fsizey) )
 ## Left panel: Galxies
 p1 = plt.axes([0.05,0.1,sbsizex*fsizey/fsizex,sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero = np.where( np.logical_and( z_gal_sf_lum_func[i] != 0.0, np.isfinite(z_gal_sf_lum_func[i]) ) )[0]
+    non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
     p1.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=2,linestyle='dotted' )
 p1.set_title('SF Galaxies')
 p1.axes.set_xlim(plxlims)
@@ -88,7 +91,7 @@ p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}
 p2 = plt.axes([0.05+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the lofar data, filtering zeros
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero = np.where( z_sf_lum_func[i] != 0.0 )[0]
+    non_zero = np.where( z_sf_lum_func[i] < -2 )[0]
     p2.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=2, alpha=0.75 )
 p2.legend()
 p2.axes.set_xlim(plxlims)
@@ -101,9 +104,9 @@ p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+
 ## Right panel (top): galaxies and activity together
 p3 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero = np.where( z_gal_sf_lum_func[i] != 0.0 )[0]
+    non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
     p3.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    non_zero = np.where( z_sf_lum_func[i] != 0.0 )[0]
+    non_zero = np.where( z_sf_lum_func[i] < cutoff  )[0]
     p3.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='SF activity', linewidth=3 )
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
@@ -115,7 +118,7 @@ p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}
 p4 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] != 0, z_gal_sf_lum_func[i] != 0 ) )[0]
+    non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < cutoff, z_gal_sf_lum_func[i] < cutoff ) )[0]
     ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
     p4.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )
 p4.axes.set_xlim(plxlims)

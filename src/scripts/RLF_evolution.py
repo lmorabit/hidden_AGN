@@ -46,7 +46,10 @@ for i in np.arange(0,5):
     for field in fields:
         infile = '{:s}_vmaxes_zmin{:s}_zmax{:s}.fits'.format(field,str(zmin),str(zmax))
         tmp = Table.read( paths.static / infile, format='fits' )
-        vmaxes = vstack([vmaxes,tmp[keep_cols]])
+        vmaxes = vstack([vmaxes,tmp[keep_cols]],metadata_conflicts='silent')
+    ## here filter out anything with vmax = 0
+    ## these come from things which are always below the noise bins for the redshift range 
+    vmaxes = vmaxes[np.where(vmaxes['vmax']>0)]
     lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=si )
     z_lum_bins.append(lum_bins)
     z_lum_func.append(lum_func)

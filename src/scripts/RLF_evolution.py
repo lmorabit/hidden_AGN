@@ -45,7 +45,7 @@ for i in np.arange(0,5):
     vmaxes = Table()
     for field in fields:
         infile = '{:s}_vmaxes_zmin{:s}_zmax{:s}.fits'.format(field,str(zmin),str(zmax))
-        tmp = Table.read( paths.data / infile, format='fits' )
+        tmp = Table.read( paths.static / infile, format='fits' )
         vmaxes = vstack([vmaxes,tmp[keep_cols]])
     lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=si )
     z_lum_bins.append(lum_bins)

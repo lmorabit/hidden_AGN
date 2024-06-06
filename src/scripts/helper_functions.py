@@ -295,7 +295,7 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
 
 def effective_area( rms_file ):
     tmp = os.path.basename( rms_file )
-    outfile = paths.data / tmp.replace( '.fits', '_effective_areas.fits' ) 
+    outfile = paths.static / tmp.replace( '.fits', '_effective_areas.fits' ) 
     print(outfile)
     if os.path.exists( outfile ):
         t = Table.read( outfile, format='fits' )

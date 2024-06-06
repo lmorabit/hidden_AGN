@@ -31,8 +31,8 @@ cochrane = Table.read( paths.static / 'cochrane_2023_table1.csv', format='csv', 
 kondapally = Table.read( paths.static / 'kondapally_2022_table2.csv', format='csv', delimiter=',' )
 
 ## read in vmaxes
-lockman_vmaxes = Table.read( paths.data / 'lockman_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
-elais_vmaxes = Table.read( paths.data / 'en1_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
+lockman_vmaxes = Table.read( paths.static / 'lockman_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
+elais_vmaxes = Table.read( paths.static / 'en1_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )
 
 ## combine these into a single catalogue for plotting
 keep_cols = ['Total_flux_dr','Z_BEST','vmax','agn_vmax','sf_vmax','AGN_flux','SF_flux', 'Overall_class','Mass_cons','SFR_cons']

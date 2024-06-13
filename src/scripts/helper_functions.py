@@ -6,6 +6,7 @@ import paths
 from astropy.stats import median_absolute_deviation as apy_mad
 import os
 from astropy.io import fits
+from scipy.optimize import curve_fit
 ## cosmology to match Kondapally and Cochrane
 from astropy.cosmology import FlatLambdaCDM
 cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
@@ -14,7 +15,6 @@ cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
 def add_sub_error( eX, eY ):
     result = np.sqrt( np.power( eX, 2. ) + np.power( eY, 2. ) )
     return( result )
-
 
 def radio_power( obs_flux_Jy, redshift, spectral_index=-0.8):
     flux_cgs = obs_flux_Jy * 1e-23
@@ -137,23 +137,81 @@ def find_agn_withz( flux_per_SA_vec, redshift_vec, T_e=1e4, rf_array=np.array([0
 ######################################################################
 ## Functions for doing star formation / AGN separation
 
-def calculate_SFR( SFR_lum, Mstar ):
+def calculate_Lrad_from_sfr_mass( sfr, Mstar ):
+    ## mass is given in log10(mass)
+    ## Smith et al 2021:
+    ## log10(L150) = (0.9+-0.01)*log10(SFR)+(0.33+-0.04)*log10(M/10^10)+22.22+-0.02
+    logLrad = 0.9 * sfr + 0.33 * np.log10( np.power( 10., Mstar) / np.power( 10., 10. ) ) + 22.22
+    return(logLrad)
+
+def calculate_SFR_from_Lrad_mass( Lrad, Mstar ):
+    ## mass is given in log10(mass)
+    ## Smith et al 2021:
+    ## log10(SFR) = ( log10(L150) - (22.22+-0.02) - (0.33+-0.04)*log10(M/10^10) ) / (0.9+-0.01)
+
+    ## to avoid errors, don't calculate where Lrad = 0 or where Mstar < 0
+    avoid_idx = np.where( np.logical_or( Lrad <= 0, Mstar <= 1 ) )[0]
+    Lrad[avoid_idx] = 1.
+    Mstar[avoid_idx] = 1.
+    logsfr = ( np.log10(Lrad) - 22.22 - 0.33*np.log10( np.power( 10., Mstar) / np.power( 10., 10. ) ) ) / 0.9
+    ## re-set the nans
+    logsfr[avoid_idx] = np.nan
+    return(logsfr)
+
+def Lrad_sfr_relation( xvals, a, b, c ):
+    sfr, mass = xvals
     ## Smith et al 2021:
     ## log10(L150) = (0.9+-0.01)*log10(SFR)+(0.33+-0.04)*log10(M/10^10)+22.22+-0.02
     ## log10(SFR) = ( log10(L150) - (22.22+-0.02) - (0.33+-0.04)*log10(M/10^10) ) / (0.9+-0.01)
+    yvals = a * sfr + b * mass + c
+    return(yvals)
 
-    ## to avoid errors, don't calculate where SFR = 0
-    zero_idx = np.where( SFR_lum > 0 )[0]
-    ## to avoid errors, don't calculate where Mstar < 0
-    flagged_idx = np.where( Mstar > 0 )[0]
-    avoid_idx = np.where( np.logical_or( SFR_lum <= 0, Mstar < 0 ) )[0]
-    SFR_lum[avoid_idx] = 1.
-    Mstar[avoid_idx] = 1.
-    sfr = ( np.log10(SFR_lum) - 22.22 - 0.33*np.log10(Mstar) ) / 0.9
-    ## re-set the nans
-    sfr[avoid_idx] = np.nan
-    return(sfr)
+def linear( x, m, b ):
+    y = m * x + b
+    return(y)
 
+def find_ridgeline( sfr, lrad, min_num=1000, sfrmin=-0.8, nbins=29 ):
+    ## log10 (L144 [W Hz−1 ]) = 22.24 + 1.08×log10 (SFR [M yr−1 ])  # from Best et al. 2023
+    sfrbins = sfrmin + np.arange(0,nbins)*0.2 
+    lrad_bins = np.zeros(len(sfrbins))
+    n_sfrbin = np.zeros(len(sfrbins)) 
+
+    ## select objects which lie in small range in SFR, widen if number of objects is too small
+    for i in np.arange(0,nbins):
+        offset = 0.1
+        idx = np.where( np.logical_and( sfr >= sfrbins[i]-offset, sfr <= sfrbins[i]+offset ) )[0]
+        if len(idx) < min_num:
+            offset = 0.2
+            idx = np.where( np.logical_and( sfr >= sfrbins[i]-offset, sfr <= sfrbins[i]+offset ) )[0]
+            if len(idx) < min_num:
+                offset = 0.3
+                idx = np.where( np.logical_and( sfr >= sfrbins[i]-offset, sfr <= sfrbins[i]+offset ) )[0]
+                if len(idx) < min_num:
+                    offset = 0.4
+                    idx = np.where( np.logical_and( sfr >= sfrbins[i]-offset, sfr <= sfrbins[i]+offset ) )[0]
+                else:
+                    print('bin is still too small.')
+        n_sfrbin[i] = len(idx)
+        ## get the SFR and radio luminosity for the bin; note here that these should both be log10 values
+        tmp_vals = lrad[idx] #- sfr[idx]
+        ## now go through Lrad 
+        nlradbins = 1200
+        check_lrad = 18.0 + 0.01*np.arange(0,nlradbins)
+        lrad_count = np.zeros(len(check_lrad))
+        #print(len(idx))
+        for j in np.arange(0,len(check_lrad)):
+            idx1 = np.where( np.logical_and( tmp_vals >= check_lrad[j]-0.05, tmp_vals <= check_lrad[j]+0.05 ) )[0]
+            lrad_count[j] = len(idx1)
+        #print(np.sum(lrad_count))
+        max_idx = np.where( lrad_count == np.max(lrad_count) )[0]
+        #print(max_idx)
+        lrad_bins[i] = check_lrad[int(np.median(max_idx))]
+    ## derive fit parameters
+    ## linear fit with: lrad = param0 + param1*sfr
+    #nonzero = np.where( n_sfrbin > 0 )[0]
+    #popt = curve_fit( linear, sfrbins[nonzero], lrad_bins[nonzero], p0=[0,0] )
+    return( sfrbins, lrad_bins )
+    
 
 def do_SFR_AGN_separation( mycat ):
     ## will need SED classifications

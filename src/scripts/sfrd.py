@@ -81,16 +81,19 @@ cutoff = -2
 ## fit cochrane eqn 5 to the RLFs
 
 def rlf_parameterised( lums, phi_star, l_star, alpha, sigma ):
-    l_over_lstar = lums - l_star ## because these are the log values (i.e., the exponents)
-    yvals = np.log10( phi_star * np.power( l_over_lstar, 1.-alpha ) * np.exp( -1./(2.*np.power(sigma,2.)) * np.log( 1. + l_over_lstar ) ) )
+    l_over_lstar = np.power( 10., lums - l_star ) ## because these are the log values (i.e., the exponents)
+    exp_fac = 1. / ( 2. * np.power( sigma, 2. ) )
+    log_fac = np.log( 1. + l_over_lstar )
+    yvals = phi_star * np.power( l_over_lstar, 1.-alpha ) * np.exp( -1.*exp_fac * np.power( log_fac, 2. ) )
     return( yvals )
 
 from scipy.optimize import curve_fit
 
-non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
-    
+non_zero = np.where( z_gal_sf_lum_func[0] < cutoff )[0]
+## Cochrane also excludes the first and last bins
+non_zero = non_zero[1:-1]
 
-popt, pcov = curve_fit( rlf_parameterised, 10.,lum_bin_cens[non_zero], np.power(10.,z_gal_sf_lum_func[0][non_zero]), p0=[0.003,22.,1,0.5] )
+popt, pcov = curve_fit( rlf_parameterised, lum_bin_cens[non_zero], np.power( 10., z_gal_sf_lum_func[0][non_zero] ), p0=[0,21.,1,0.5] )
 
 
 

@@ -285,7 +285,7 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
     agn_Lrad = radio_power( vmaxes['AGN_flux'], vmaxes['Z_BEST'], spectral_index=si )
     sf_Lrad = radio_power( vmaxes['SF_flux'], vmaxes['Z_BEST'], spectral_index=si )
     ## calculate the SFR
-    sfrs = calculate_SFR( sf_Lrad, vmaxes['Mass_cons'] )
+    sfrs = calculate_SFR_from_Lrad_mass( sf_Lrad, vmaxes['Mass_cons'] )
 
     ## take the log
     log10_Lrad = np.log10(Lrad)

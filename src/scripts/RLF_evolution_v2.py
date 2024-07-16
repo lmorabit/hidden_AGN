@@ -90,7 +90,7 @@ cutoff = -2
 fig = plt.figure( figsize=(fsizex,fsizey) )
 
 ## Left panel (top): galaxies and activity together
-p1 = plt.axes([0.06,0.42,sbsizex*fsizey/fsizex,0.7*sbsizey])
+p1 = plt.axes([0.06,0.32,sbsizex*fsizey/fsizex,0.7*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
     p1.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )

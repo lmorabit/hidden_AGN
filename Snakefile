@@ -36,6 +36,8 @@ rule simba_comparison:
 		"src/scripts/simba_comparison.py"
 rule rlf_evolution:
 	input:
+                "src/static/RLFS_50MYR_SF.csv",
+                "src/static/RLFS_50MYR_AGN.csv",
                 "src/static/redshift_bins.csv",
 		"src/data/lockman_vmaxes_zmin0.003_zmax0.3.fits",
                 "src/data/en1_vmaxes_zmin0.003_zmax0.3.fits",
@@ -73,4 +75,4 @@ rule rlf_evolution:
 	conda:
 		"environment.yml"
 	script:
-		"src/scripts/RLF_evolution.py"
+		"src/scripts/RLF_evolution_v2.py"

@@ -47,7 +47,9 @@ dependencies:
      - src/static/RLFS_50MYR_AGN.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
      - src/static/en1_vmaxes_zmin0.003_zmax0.3.fits
-   src/scripts/RLF_evolution.py:
+   src/scripts/RLF_evolution_v2.py:
+     - src/static/RLFS_50MYR_SF.csv
+     - src/static/RLFS_50MYR_AGN.csv
      - src/static/redshift_bins.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
      - src/static/en1_vmaxes_zmin0.003_zmax0.3.fits

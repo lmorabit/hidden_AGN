@@ -73,7 +73,7 @@ lum_bin_cens = z_lum_bins[0][0:-1] + 0.5*(z_lum_bins[0][1]-z_lum_bins[0][0])
 
 fsizex = 7
 fsizey = 5
-sbsizex = 0.7
+sbsizex = 0.6
 sbsizey = 0.8
 plxlims = (20.1,27)
 plylims = (-7.5,-1)

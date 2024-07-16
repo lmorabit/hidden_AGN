@@ -71,7 +71,7 @@ for i in np.arange(0,5):
 lum_bin_cens = z_lum_bins[0][0:-1] + 0.5*(z_lum_bins[0][1]-z_lum_bins[0][0])
 
 
-fsizex = 10
+fsizex = 9
 fsizey = 5
 sbsizex = 0.8
 sbsizey = 0.8
@@ -135,7 +135,7 @@ p3.legend()
 p3.set_title('SIMBA RLFs',fontsize=18)
 
 ## simulations (bottom panel): ratio of RLFs by galaxies and activity
-p4 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
+p4 = plt.axes([0.06+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < cutoff, z_gal_sf_lum_func[i] < cutoff ) )[0]
@@ -144,7 +144,8 @@ for i in np.arange(0,len(z_lum_bins)):
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.5,1.1))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-p4.set_ylabel('Activity / Galaxy')
+p4.yaxis.set_visible(False)
+#p4.set_ylabel('Activity / Galaxy')
 
 fig.savefig(paths.figures / 'RLF_evolution_SF.png',dpi=300)
 fig.clear()

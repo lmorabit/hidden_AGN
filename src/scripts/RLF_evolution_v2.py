@@ -121,7 +121,7 @@ p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+
 p2.set_ylabel('Activity / Galaxy')
 
 ## simulations (top panel): comparison
-p3 = plt.axes([0.06+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
+p3 = plt.axes([0.06+sbsizex*fsizey/fsizex,0.32,sbsizex*fsizey/fsizex,0.7*sbsizey])
 p3.plot( Simba_SF['x'], Simba_SF['Curve1'], color='green', linewidth=2.5, label='Simba SF' )
 p3.plot( Simba_AGN['x'], Simba_AGN['Curve2'], color='blue', linewidth=2.5, label='Simba AGN' )
 
@@ -135,7 +135,7 @@ p3.legend()
 p3.set_title('SIMBA RLFs',fontsize=18)
 
 ## simulations (bottom panel): ratio of RLFs by galaxies and activity
-p4 = plt.axes([0.06+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
+p4 = plt.axes([0.06+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.3*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < cutoff, z_gal_sf_lum_func[i] < cutoff ) )[0]

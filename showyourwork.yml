@@ -43,13 +43,11 @@ dependencies:
      - src/static/kondapally_2022_table2.csv
      - src/static/cochrane_2023_table1.csv
    src/scripts/simba_comparison.py:
-     - src/static/RLFS_50MYR_SF.csv
-     - src/static/RLFS_50MYR_AGN.csv
+     - src/static/RLFs_flux_lim.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
      - src/static/en1_vmaxes_zmin0.003_zmax0.3.fits
    src/scripts/RLF_evolution_v2.py:
-     - src/static/RLFS_50MYR_SF.csv
-     - src/static/RLFS_50MYR_AGN.csv
+     - src/static/RLFs_flux_lim.csv
      - src/static/redshift_bins.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
      - src/static/en1_vmaxes_zmin0.003_zmax0.3.fits

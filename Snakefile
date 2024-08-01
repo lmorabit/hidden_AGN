@@ -24,8 +24,7 @@ rule comparison_plot:
                 "src/scripts/comparison_plot.py"
 rule simba_comparison:
 	input:
-		"src/static/RLFS_50MYR_SF.csv",
-		"src/static/RLFS_50MYR_AGN.csv",
+		"src/static/RLFs_flux_lim.csv",
 		"src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits",
 		"src/static/en1_vmaxes_zmin0.003_zmax0.3.fits"
 	output:
@@ -36,8 +35,7 @@ rule simba_comparison:
 		"src/scripts/simba_comparison.py"
 rule rlf_evolution:
 	input:
-                "src/static/RLFS_50MYR_SF.csv",
-                "src/static/RLFS_50MYR_AGN.csv",
+                "src/static/RLFs_flux_lim.csv",
                 "src/static/redshift_bins.csv",
 		"src/data/lockman_vmaxes_zmin0.003_zmax0.3.fits",
                 "src/data/en1_vmaxes_zmin0.003_zmax0.3.fits",

@@ -26,15 +26,16 @@ zmax = 0.3   ## matches Mauch & Sadler 2007
 dz = 0.0001  ## matches Cochrane and Kondapally
 
 ## read in SIMBA
+'''
 Simba_SF = Table.read( paths.static / 'RLFS_50MYR_SF.csv', format='csv', delimiter=',' )
 Simba_AGN = Table.read( paths.static / 'RLFS_50MYR_AGN.csv', format='csv', delimiter=',' )
 ## shift using spectral index
 Simba_SF['x']  = Simba_SF['x'] + np.log10( np.power( (144./1400.), si ) )
 Simba_AGN['x']  = Simba_AGN['x'] + np.log10( np.power( (144./1400.), si ) )
-
 '''
+
 ## new simba check
-Simba = Table.read( paths.static / 'RLFs_no_flux_lim.csv', format='csv', delimiter=',' )
+Simba = Table.read( paths.static / 'RLFs_flux_lim.csv', format='csv', delimiter=',' )
 z_idx = np.where( Simba['z'] == 0.0 )[0]
 Simba = Simba[z_idx]
 Simba_SF = Table()
@@ -43,7 +44,7 @@ Simba_SF.add_column( Column( Simba['SF'], name='Curve1' ) )
 Simba_AGN = Table()
 Simba_AGN.add_column( Column( Simba['logP']+np.log10( np.power( (144./1400.), si ) ), name='x' ) )
 Simba_AGN.add_column( Column( Simba['AGN'], name='Curve2' ) )
-'''
+
 
 ## read in vmaxes
 lockman_vmaxes = Table.read( paths.static / 'lockman_vmaxes_zmin0.003_zmax0.3.fits', format='fits' )

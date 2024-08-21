@@ -184,7 +184,7 @@ plt.close()
 
 plxlims = (20.1,27)
 plylims = (-7.5,-1)
-ratio_ylims = (0.7,2.5)
+ratio_ylims = (0.7,10)
 
 zcols_agn = mycols_m[np.arange(0,len(z_lum_bins))*int(n/len(z_lum_bins))]
 
@@ -219,6 +219,7 @@ for i in np.arange(0,len(z_lum_bins)):
     p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_agn[i], linewidth=3 )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(ratio_ylims)
+p2.axes.set_yscale('log')
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p2.set_ylabel('Activity / Galaxy')
 
@@ -227,8 +228,8 @@ p3 = plt.axes([0.1+sbsizex*fsizey/fsizex,0.32,sbsizex*fsizey/fsizex,0.7*sbsizey]
 for i in np.arange(0,len(simba_z_bin_cens)):
     z_idx = np.where( Simba['z'] == simba_z_bin_cens[i] )[0]
     tmp_Simba = Simba[z_idx]
-    non_zero_idx = np.where( np.logical_and( np.isfinite(tmp_Simba['AGN']), np.isfinite(tmp_Simba['Qs']) ) )[0]
-    p3.plot( tmp_Simba['logP'][non_zero_idx], tmp_Simba['Qs'][non_zero_idx], color=simba_zcols[i], linewidth=2.5, linestyle='dotted' )
+    non_zero_idx = np.where( np.logical_and( np.isfinite(tmp_Simba['AGN']), np.isfinite(tmp_Simba['REQs']) ) )[0]
+    p3.plot( tmp_Simba['logP'][non_zero_idx], tmp_Simba['REQs'][non_zero_idx], color=simba_zcols[i], linewidth=2.5, linestyle='dotted' )
     p3.plot( tmp_Simba['logP'][non_zero_idx], tmp_Simba['AGN'][non_zero_idx], color=simba_zcols[i], linewidth=2.5, label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])) )
 #p3.plot( Simba['logP'], Simba['Qs'], color='blue', linewidth=2.5, label='Simba AGN gals', linestyle='dotted' )
 #p3.plot( Simba['logP'], Simba['AGN'], color='blue', linewidth=2.5, label='Simba AGN' )
@@ -254,10 +255,11 @@ for i in np.arange(0,len(simba_z_bin_cens)):
     z_idx = np.where( Simba['z'] == simba_z_bin_cens[i] )[0]
     tmp_Simba = Simba[z_idx]
     non_zero_idx = np.where( np.logical_and( np.isfinite(tmp_Simba['SF']), np.isfinite(tmp_Simba['SFGs']) ) )[0]
-    ratio = np.power(10., tmp_Simba['AGN'][non_zero_idx] ) / np.power( 10., tmp_Simba['Qs'][non_zero_idx] )
+    ratio = np.power(10., tmp_Simba['AGN'][non_zero_idx] ) / np.power( 10., tmp_Simba['REQs'][non_zero_idx] )
     p4.plot( tmp_Simba['logP'][non_zero_idx], ratio, color=simba_zcols[i], linewidth=3 )
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim(ratio_ylims)
+p4.axes.set_yscale('log')
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p4.yaxis.set_visible(False)
 #p4.set_ylabel('Activity / Galaxy')

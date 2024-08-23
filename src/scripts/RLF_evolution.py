@@ -186,11 +186,13 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     sfstr = 'SF & ' 
     for i in np.arange(0,len(sf_delta_int)):
         sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
-    sfstr = sfstr + '\\\\ \n' )
-    sfstr = 'AGN & ' 
+    sfstr = sfstr + '\\\\ \n' 
+    f.write(sfstr)
+    agnstr = 'AGN & ' 
     for i in np.arange(0,len(agn_delta_int)):
-        sfstr = sfstr + ' & {:1.2f}'.format(agn_delta_int[i])
-    sfstr = sfstr + '\\\\ \n' )
+        agnstr = agnstr + ' & {:1.2f}'.format(agn_delta_int[i])
+    agnstr = agnstr + '\\\\ \n' 
+    f.write(agnstr)
     f.write( '    \\end{tabular}\n' )
     f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
     f.write( '    \\label{tab:intvalues}\n' )

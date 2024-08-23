@@ -178,7 +178,7 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
     f.write( '    \\centering\n' )
     f.write( '    \\begin{tabular}{c|l|l}\n' )
-    f.write( '  & SF & AGN \\\\ \\hline\n' )
+    f.write( ' redshift & SF & AGN \\\\ \\hline\n' )
     for i in np.arange(0,len(z_lum_bins)):
         f.write( '{:s} $<$ z $<$ {:s} & {:1.2f}  & {:1.2f}  \\\\ \n'.format(str(zbin_starts[i]),str(zbin_ends[i]),sf_delta_int[i],agn_delta_int[i]) )
     f.write( '    \\end{tabular}\n' )

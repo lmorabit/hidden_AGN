@@ -68,6 +68,6 @@ n_tbid = len( combined_idx )
 leftover = n_unres - n_tbid
 
 with open( paths.output / 'flowchart_numbers.txt', 'w' ) as f:
-    f.write( 'There are {:,} total sources. {:,} have a radio excess, while {:,} do not. Of those without a radio excess, there are {:,} unresolved sources for which their $T_b$ is checked. Of those, {:,} are $T_b$-identified AGN, while {:,} are not.'.format(len(detected), n_radio_excess, n_not_excess, n_unres, len(combined_idx), leftover) )
+    f.write( 'We start with {:,} total sources. {:,} have a radio excess, while {:,} do not. Of those without a radio excess, there are {:,} unresolved sources for which their $T_b$ is checked. Of those, {:,} are $T_b$-identified AGN, while {:,} are not. In the final sample, there are {:,} sources contributing to the AGN category and {:,} sources contributing to the SF category. This is more than the total number of sources due to the $T_b$-identified AGN which some of their flux density shifted from the SF to the AGN category.'.format(len(detected), n_radio_excess, n_not_excess, n_unres, len(combined_idx), leftover, n_radio_excess+len(combined_idx), n_not_excess) )
 
 

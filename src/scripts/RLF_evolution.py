@@ -182,7 +182,7 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     zmax = ' $z_{max}$ '
     for i in np.arange(0,len(z_lum_bins)):
         zmin = zmin + ' & {:s}'.format(str(zbin_starts[i]))
-        zmax = zmax + ' & {:s}'.format(,str(zbin_ends[i]))
+        zmax = zmax + ' & {:s}'.format(str(zbin_ends[i]))
     zmin = zmin + ' \\\\ \n'
     zmax = zmax + ' \\\\ \hline \n'
     f.write( zmin ) 

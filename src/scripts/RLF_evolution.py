@@ -89,26 +89,20 @@ zcols_agn = mycols_m[np.arange(0,len(z_lum_bins))*int(n/len(z_lum_bins))]
 ## start the figure
 fig = plt.figure( figsize=(fsizex,fsizey) )
 
+print('SF')
+sf_delta_int = []
+
 ## STAR FORMATION
 p1 = plt.axes([0.07,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_sf_lum_func[i] < 0 )[0]
     p1.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    gal_trapz = np.trapz( np.power( 10., z_gal_sf_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
     non_zero = np.where( z_sf_lum_func[i] < 0  )[0]
     p1.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-
-
-    ## integrate under galaxies to find normalisation ?
+    trapz = np.trapz( np.power( 10., z_sf_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
+    sf_delta_int.append(trapz / gal_trapz)
     
-
-    tmp = np.trapz( z_gal_sf_lum_func[i][non_zero], lum_bin_cens[non_zero] )
-    corrfac = 1. / tmp 
-
-    test = z_gal_sf_lum_func[i][non_zero] * corrfac
-    test1 = z_sf_lum_func[i][non_zero] * corrfac
-    ratio = test / test1 
-    fred = np.trapz( ratio, lum_bin_cens[non_zero] )
-    #print(fred)
 
 l1 = p1.legend()
 dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
@@ -129,12 +123,7 @@ p2.plot( (19,27), (0.5,0.5), color='gray', linewidth=1, alpha=0.25 )
 for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < 0, z_gal_sf_lum_func[i] < 0 ) )[0]
     ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
-    p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )
-
-    tmp = np.abs( ratio - 1 ) 
-    fred = np.trapz( tmp, lum_bin_cens[non_zero_idx] )
-    print( fred )
-    
+    p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )    
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim((0.4,1.1))
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
@@ -142,14 +131,19 @@ p2.set_ylabel(r'$\Delta$'+'RLF')
 
 ## integrate the ratio
 
+print('AGN')
+agn_delta_int = []
 
 ## ACTIVE GALACTIC NUCLEI
 p3 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_agn_lum_func[i] != 0.0 )[0]
     p3.plot( lum_bin_cens[non_zero], z_gal_agn_lum_func[i][non_zero], color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    gal_trapz = np.trapz( np.power( 10., z_gal_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
     non_zero = np.where( z_agn_lum_func[i] != 0.0 )[0]
     p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    trapz = np.trapz( np.power( 10., z_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
+    agn_delta_int.append(trapz / gal_trapz)
 l1 = p3.legend()
 dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
 lline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3, linestyle='dotted' )
@@ -170,11 +164,6 @@ for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_agn_lum_func[i] != 0, z_gal_agn_lum_func[i] != 0 ) )[0]
     ratio = np.power(10., z_agn_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_agn_lum_func[i][non_zero_idx] )
     p4.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_agn[i], linewidth=3 )
-
-    tmp = np.abs( ratio - 1 ) 
-    fred = np.trapz( tmp, lum_bin_cens[non_zero_idx] )
-    print( fred )
-
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.7,2.5))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
@@ -184,7 +173,18 @@ fig.savefig(paths.figures / 'RLF_evolution.png',dpi=300)
 fig.clear()
 plt.close()
 
-
+## write a table
+with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
+    f.write( '\\begin{table}[]\n' )
+    f.write( '    \\centering\n' )
+    f.write( '    \\begin{tabular}{c|l|l}\n' )
+    f.write( '  & SF & AGN \\\\ \\hline\n' )
+    for i in np.arange(0,len(z_lum_bins)):
+        f.write( '{:s} < z < {:s} & {:2f}  & {:2f}  \\\\ \n'.format(str(zbin_starts[i]),str(zbin_ends[i]),sf_delta_int[i],agn_delta_int[i]) )
+    f.write( '    \\end{tabular}\n' )
+    f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
+    f.write( '    \\label{tab:intvalues}\n' )
+    f.write( '\\end{table}' )
 
 '''
 Redshift bins

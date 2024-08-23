@@ -82,6 +82,9 @@ dependencies:
    src/scripts/flowchart_numbers.py:
      - src/static/en1_03_matched_inMOC_inHR.fits
      - src/static/lockman_03_matched_inMOC_inHR.fits
+     - src/static/en1_DR1_rms_masked.fits
+     - src/static/lockman_DR1_rms_masked.fits
+
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 

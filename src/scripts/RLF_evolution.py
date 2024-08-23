@@ -48,6 +48,18 @@ for i in np.arange(0,5):
         tmp = Table.read( paths.static / infile, format='fits' )
         vmaxes = vstack([vmaxes,tmp[keep_cols]],metadata_conflicts='silent')
     lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=si )
+    ## filter out unconstrained bins
+    filter_idx = np.where( np.abs(agn_lum_func - lum_func) > 4. )[0]
+    agn_lum_func[filter_idx] = 0. 
+    filter_idx = np.where( np.abs(gal_agn_lum_func - lum_func) > 4. )[0]
+    gal_agn_lum_func[filter_idx] = 0. 
+
+    filter_idx = np.where( np.logical_or( np.abs(sf_lum_func - lum_func) > 4., sf_lum_func > -1.8 ) )[0]
+    sf_lum_func[filter_idx] = 0. 
+    filter_idx = np.where( np.logical_or( np.abs(gal_sf_lum_func - lum_func) > 4., gal_sf_lum_func > -1.8 ) )[0]
+    gal_sf_lum_func[filter_idx] = 0. 
+
+
     z_lum_bins.append(lum_bins)
     z_lum_func.append(lum_func)
     z_agn_lum_func.append(agn_lum_func)
@@ -59,7 +71,7 @@ for i in np.arange(0,5):
 lum_bin_cens = z_lum_bins[0][0:-1] + 0.5*(z_lum_bins[0][1]-z_lum_bins[0][0])
 
 
-fsizex = 14
+fsizex = 10 # 14
 fsizey = 5
 sbsizex = 0.8
 sbsizey = 0.8
@@ -73,10 +85,10 @@ plylims = (-7.5,-1)
 zcols_sf = mycols[np.arange(0,len(z_lum_bins))*int(n/len(z_lum_bins))]
 
 ## some bins are not well constrained, use this value as a cutoff:
-cutoff = -2
+cutoff = 0
 
 fig = plt.figure( figsize=(fsizex,fsizey) )
-## Left panel: Galxies
+## Left panel: Galaxies
 p1 = plt.axes([0.05,0.1,sbsizex*fsizey/fsizex,sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
@@ -87,7 +99,7 @@ p1.axes.set_ylim(plylims)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Middle panel: Activity
+## Middle panel: Process
 p2 = plt.axes([0.05+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the lofar data, filtering zeros
 for i in np.arange(0,len(z_lum_bins)):
@@ -97,24 +109,24 @@ p2.legend()
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)
-p2.set_title('SF Activity')
+p2.set_title('SF Process')
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 #p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Right panel (top): galaxies and activity together
+## Right panel (top): galaxies and process together
 p3 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
     p3.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     non_zero = np.where( z_sf_lum_func[i] < cutoff  )[0]
-    p3.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='SF activity', linewidth=3 )
+    p3.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='SF process', linewidth=3 )
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
 p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Right panel (bottom): ratio of the RLFs by galaxies and activity
+## Right panel (bottom): ratio of the RLFs by galaxies and process
 p4 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 for i in np.arange(0,len(z_lum_bins)):
@@ -124,7 +136,7 @@ for i in np.arange(0,len(z_lum_bins)):
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.5,1.1))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-p4.set_ylabel('Activity / Galaxy')
+p4.set_ylabel(r'$\Delta$'+'RLF')
 fig.savefig(paths.figures / 'RLF_evolution_SF.png',dpi=300)
 fig.clear()
 plt.close()
@@ -146,7 +158,7 @@ p1.axes.set_ylim(plylims)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Middle panel: Activity
+## Middle panel: process
 p2 = plt.axes([0.05+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the lofar data, filtering zeros
 for i in np.arange(0,len(z_lum_bins)):
@@ -156,24 +168,24 @@ p2.legend()
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)
-p2.set_title('AGN Activity')
+p2.set_title('AGN Process')
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 #p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Right panel (top): galaxies and activity together
+## Right panel (top): galaxies and process together
 p3 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
     non_zero = np.where( z_gal_agn_lum_func[i] != 0.0 )[0]
     p3.plot( lum_bin_cens[non_zero], z_gal_agn_lum_func[i][non_zero], color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     non_zero = np.where( z_agn_lum_func[i] != 0.0 )[0]
-    p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='agn activity', linewidth=3 )
+    p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='agn process', linewidth=3 )
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
 p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
 p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Right panel (bottom): ratio of the RLFs by galaxies and activity
+## Right panel (bottom): ratio of the RLFs by galaxies and process
 p4 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 for i in np.arange(0,len(z_lum_bins)):
@@ -183,13 +195,110 @@ for i in np.arange(0,len(z_lum_bins)):
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.7,2.5))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-p4.set_ylabel('Activity / Galaxy')
+p4.set_ylabel(r'$\Delta$'+'RLF')
 fig.savefig(paths.figures / 'RLF_evolution_AGN.png',dpi=300)
 fig.clear()
 plt.close()
 
 
+##### COMBINED IMAGE
 
+fig = plt.figure( figsize=(fsizex,fsizey) )
+
+## STAR FORMATION
+p1 = plt.axes([0.07,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
+for i in np.arange(0,len(z_lum_bins)):
+    non_zero = np.where( z_gal_sf_lum_func[i] < cutoff )[0]
+    p1.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    non_zero = np.where( z_sf_lum_func[i] < cutoff  )[0]
+    p1.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+
+
+    ## integrate under galaxies to find normalisation ?
+    
+
+    tmp = np.trapz( z_gal_sf_lum_func[i][non_zero], lum_bin_cens[non_zero] )
+    corrfac = 1. / tmp 
+
+    test = z_gal_sf_lum_func[i][non_zero] * corrfac
+    test1 = z_sf_lum_func[i][non_zero] * corrfac
+    ratio = test / test1 
+    fred = np.trapz( ratio, lum_bin_cens[non_zero] )
+    #print(fred)
+
+l1 = p1.legend()
+dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
+lline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3, linestyle='dotted' )
+l2 = p1.legend((lline,dline),('Galaxies', 'Process'),loc='upper right')
+p1.add_artist(l1)
+p1.axes.set_xlim(plxlims)
+p1.axes.set_ylim(plylims)
+p1.xaxis.set_visible(False)
+p1.set_title('Star Formation',fontsize=20)
+p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+
+## Right panel (bottom): ratio of the RLFs by galaxies and process
+p2 = plt.axes([0.07,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
+p2.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
+p2.plot( (19,27), (0.5,0.5), color='gray', linewidth=1, alpha=0.25 )
+for i in np.arange(0,len(z_lum_bins)):
+    non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < cutoff, z_gal_sf_lum_func[i] < cutoff ) )[0]
+    ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
+    p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )
+
+    tmp = np.abs( ratio - 1 ) 
+    fred = np.trapz( tmp, lum_bin_cens[non_zero_idx] )
+    print( fred )
+    
+p2.axes.set_xlim(plxlims)
+p2.axes.set_ylim((0.4,1.1))
+p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p2.set_ylabel(r'$\Delta$'+'RLF')
+
+## integrate the ratio
+
+
+## ACTIVE GALACTIC NUCLEI
+p3 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
+for i in np.arange(0,len(z_lum_bins)):
+    non_zero = np.where( z_gal_agn_lum_func[i] != 0.0 )[0]
+    p3.plot( lum_bin_cens[non_zero], z_gal_agn_lum_func[i][non_zero], color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    non_zero = np.where( z_agn_lum_func[i] != 0.0 )[0]
+    p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+l1 = p3.legend()
+dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
+lline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3, linestyle='dotted' )
+l2 = p3.legend((lline,dline),('Galaxies', 'Process'),loc='upper right')
+p3.add_artist(l1)
+p3.axes.set_xlim(plxlims)
+p3.axes.set_ylim(plylims)
+p3.xaxis.set_visible(False)
+p3.set_title('Active Galactic Nuclei',fontsize=20)
+p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
+
+## Right panel (bottom): ratio of the RLFs by galaxies and process
+p4 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
+p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
+p4.plot( (19,27), (2,2), color='gray', linewidth=1, alpha=0.25 )
+for i in np.arange(0,len(z_lum_bins)):
+    non_zero_idx = np.where( np.logical_and( z_agn_lum_func[i] != 0, z_gal_agn_lum_func[i] != 0 ) )[0]
+    ratio = np.power(10., z_agn_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_agn_lum_func[i][non_zero_idx] )
+    p4.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_agn[i], linewidth=3 )
+
+    tmp = np.abs( ratio - 1 ) 
+    fred = np.trapz( tmp, lum_bin_cens[non_zero_idx] )
+    print( fred )
+
+p4.axes.set_xlim(plxlims)
+p4.axes.set_ylim((0.7,2.5))
+p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p4.set_ylabel(r'$\Delta$'+'RLF')
+
+fig.savefig(paths.figures / 'RLF_evolution.png',dpi=300)
+fig.clear()
+plt.close()
 
 
 

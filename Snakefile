@@ -81,6 +81,7 @@ rule calculate_vars:
 		"src/static/lockman_DR1_rms_masked.fits"
 	output:
 		"src/output/lockman_detectable.txt",
-		"src/output/en1_detectable.txt"
+		"src/output/en1_detectable.txt",
+		"src/output/flowchart_numbers.txt"
 	script:
 		"src/scripts/flowchart_numbers.py"

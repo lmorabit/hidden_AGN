@@ -68,9 +68,8 @@ rule rlf_evolution:
                 "src/data/en1_vmaxes_zmin3.3_zmax4.6.fits",
                 "src/data/en1_vmaxes_zmin4.6_zmax5.7.fits"
 	output:
-		"RLF_evolution_AGN.png",
-		"RLF_evolution_SF.png"
+		"RLF_evolution.png"
 	conda:
 		"environment.yml"
 	script:
-		"src/scripts/RLF_evolution_v2.py"
+		"src/scripts/RLF_evolution.py"

@@ -178,12 +178,12 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
     f.write( '    \\centering\n' )
     f.write( '    \\begin{tabular}{lccccc}\n' )
-    zstr = ' & '
+    zstr = ' '
     for i in np.arange(0,len(z_lum_bins)):
-        zstr = zstr + '{:s} $<$ z $<$ {:s} & '.format(str(zbin_starts[i]),str(zbin_ends[i]))
+        zstr = zstr + ' & {:s} $<$ z $<$ {:s} '.format(str(zbin_starts[i]),str(zbin_ends[i]))
     zstr = zstr + '\\\\ \hline \n'
     f.write( zstr ) 
-    sfstr = 'SF & ' 
+    sfstr = 'SF ' 
     for i in np.arange(0,len(sf_delta_int)):
         sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
     sfstr = sfstr + '\\\\ \n' 

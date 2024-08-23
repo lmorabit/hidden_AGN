@@ -81,7 +81,7 @@ order = [3,2,0,1]
 p1.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
 
-## Middle panel: same as left panel but new data by activity now
+## Middle panel: same as left panel but new data by process now
 p2 = plt.axes([0.05+sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,sbsizey])
 ## plot the previous data
 p2.plot( cochrane['logL150'], cochrane['logPhi'], color=coch, label='Cochrane et al. (2023)', linewidth=2)
@@ -90,9 +90,9 @@ p2.plot( kondapally['logL150'], kondapally['logPhi'], color=kond, label='Kondapa
 #non_zero = np.where( lum_func != 0.0 )[0]
 #p2.plot( lum_bin_cens[non_zero], lum_func[non_zero], color='black', label='Total' )
 non_zero = np.where( agn_lum_func != 0.0 )[0]
-p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3, alpha=0.75 )
+p2.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN process', linewidth=3, alpha=0.75 )
 non_zero = np.where( sf_lum_func != 0.0 )[0]
-p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3, alpha=0.75 )
+p2.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF process', linewidth=3, alpha=0.75 )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)
@@ -102,16 +102,16 @@ handles, labels = p2.get_legend_handles_labels()
 order = [3,2,0,1]
 p2.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
-## Right panel (top): RLFs using new data, galaxies and activity
+## Right panel (top): RLFs using new data, galaxies and process
 p3 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 non_zero = np.where( gal_agn_lum_func != 0.0 )[0]
 p3.plot( lum_bin_cens[non_zero], gal_agn_lum_func[non_zero], color=agngalc, label='AGN galaxies', linewidth=3, alpha=0.75, linestyle='dotted' )
 non_zero = np.where( gal_sf_lum_func != 0.0 )[0]
 p3.plot( lum_bin_cens[non_zero], gal_sf_lum_func[non_zero], color=sfggalc, label='SF galaxies', linewidth=3, alpha=0.75, linestyle='dotted' )
 non_zero = np.where( agn_lum_func != 0.0 )[0]
-p3.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN activity', linewidth=3 )
+p3.plot( lum_bin_cens[non_zero], agn_lum_func[non_zero], color=agnc, label='AGN process', linewidth=3 )
 non_zero = np.where( sf_lum_func != 0.0 )[0]
-p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF activity', linewidth=3 )
+p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF process', linewidth=3 )
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
@@ -121,7 +121,7 @@ handles, labels = p3.get_legend_handles_labels()
 order = [3,1,2,0]
 p3.legend([handles[idx] for idx in order],[labels[idx] for idx in order])
 
-## Right panel (bottom): ratio of the RLFs by galaxies and activity
+## Right panel (bottom): ratio of the RLFs by galaxies and process
 p4 = plt.axes([0.12+2*sbsizex*fsizey/fsizex,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p4.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 non_zero_idx = np.where( np.logical_and( agn_lum_func != 0, gal_agn_lum_func != 0 ) )[0]
@@ -133,7 +133,7 @@ p4.plot( lum_bin_cens[non_zero_idx], ratio, color=sfc, label='SF', linewidth=3 )
 p4.axes.set_xlim(plxlims)
 #p4.axes.set_ylim((0.8,1.1))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
-p4.set_ylabel('Activity / Galaxy')
+p4.set_ylabel(r'$\Delta$RLF')
 p4.legend()
 fig.savefig(paths.figures / 'deep_fields_RLFs.png',dpi=300)
 fig.clear()

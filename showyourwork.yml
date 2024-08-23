@@ -46,7 +46,7 @@ dependencies:
      - src/static/RLFs_flux_lim.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
      - src/static/en1_vmaxes_zmin0.003_zmax0.3.fits
-   src/scripts/RLF_evolution_v2.py:
+   src/scripts/RLF_evolution.py:
      - src/static/RLFs_flux_lim.csv
      - src/static/redshift_bins.csv
      - src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits
@@ -79,6 +79,9 @@ dependencies:
      - src/static/en1_vmaxes_zmin2.5_zmax3.3.fits
      - src/static/en1_vmaxes_zmin3.3_zmax4.6.fits
      - src/static/en1_vmaxes_zmin4.6_zmax5.7.fits
+  src/scripts/flowchart_numbers.py:
+     - src/static/en1_03_matched_inMOC_inHR.fits
+     - src/static/lockman_03_matched_inMOC_inHR.fits
 
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex

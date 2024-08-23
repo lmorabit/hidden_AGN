@@ -177,6 +177,30 @@ plt.close()
 with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
     f.write( '    \\centering\n' )
+    f.write( '    \\begin{tabular}{lccccc}\n' )
+    zstr = ' & '
+    for i in np.arange(0,len(z_lum_bins)):
+        zstr = zstr + '{:s} $<$ z $<$ {:s} & '.format(str(zbin_starts[i]),str(zbin_ends[i]))
+    zstr = zstr + '\\\\ \hline \n'
+    f.write( zstr ) 
+    sfstr = 'SF & ' 
+    for i in np.arange(0,len(sf_delta_int)):
+        sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
+    sfstr = sfstr + '\\\\ \n' )
+    sfstr = 'AGN & ' 
+    for i in np.arange(0,len(agn_delta_int)):
+        sfstr = sfstr + ' & {:1.2f}'.format(agn_delta_int[i])
+    sfstr = sfstr + '\\\\ \n' )
+    f.write( '    \\end{tabular}\n' )
+    f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
+    f.write( '    \\label{tab:intvalues}\n' )
+    f.write( '\\end{table}' )
+
+
+'''
+with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
+    f.write( '\\begin{table}\n' )
+    f.write( '    \\centering\n' )
     f.write( '    \\begin{tabular}{c|l|l}\n' )
     f.write( ' redshift & SF & AGN \\\\ \\hline\n' )
     for i in np.arange(0,len(z_lum_bins)):
@@ -185,6 +209,11 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
     f.write( '    \\label{tab:intvalues}\n' )
     f.write( '\\end{table}' )
+
+'''
+
+
+
 
 '''
 Redshift bins

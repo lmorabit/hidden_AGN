@@ -79,7 +79,9 @@ dependencies:
      - src/static/en1_vmaxes_zmin2.5_zmax3.3.fits
      - src/static/en1_vmaxes_zmin3.3_zmax4.6.fits
      - src/static/en1_vmaxes_zmin4.6_zmax5.7.fits
-
+   src/scripts/flowchart_numbers.py:
+     - src/static/en1_03_matched_inMOC_inHR.fits
+     - src/static/lockman_03_matched_inMOC_inHR.fits
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex
 

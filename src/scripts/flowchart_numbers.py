@@ -40,8 +40,3 @@ for field in fields:
     ndet = len( np.where(lotss['Detectability_SNR'] > 5.)[0] )
     with open( paths.output / '{:s}_detectable.txt'.format(field), 'w' ) as f:
         f.write( str(ndet) )
-
-
-
-
-

@@ -2,7 +2,7 @@ import paths
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
-from astropy.table import Table, Column, join
+from astropy.table import Table, Column, join, vstack
 from helper_functions import *
 from astropy.io import fits
 import os
@@ -34,6 +34,8 @@ t = Table.read( paths.static / 'redshift_bins.csv', format='csv' )
 zbin_starts = t['zbin_starts']
 zbin_ends = t['zbin_ends']
 
+outcat = Table()
+
 for field in fields:
     print('Starting with field: {:s}'.format(field))
     infile = paths.static / '{:s}_03_matched_inMOC_inHR.fits'.format(field)
@@ -43,6 +45,7 @@ for field in fields:
     ## add brightness temperature information
     lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )
     lotss = do_SFR_AGN_separation( lotss )
+    outcat = vstack([outcat,lotss])
     ## calculate vmaxes
     for i in np.arange(0,len(zbin_starts)):
         zmin = zbin_starts[i]

@@ -53,7 +53,8 @@ def get_values( x, y, dy ):
         n_hidx = np.arange(0,hidx[0]+1)
     else:
         n_hidx = np.where( dyvals < 1. )[0]
-        hidx = np.insert( hidx,1,np.arange(1,np.min(tmp)+1))
+        tmp_hidx = []
+        tmp_hidx.append([hidx[0],np.arange(1,np.min(tmp)+1)[0]])
         if np.max(tmp) < np.max(hidx):
             hidx = np.insert( hidx, len(hidx)-1, np.max(tmp) )
     return( xvals, yvals, dyvals, n_hidx, hidx )

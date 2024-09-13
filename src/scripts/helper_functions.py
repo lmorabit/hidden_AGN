@@ -41,6 +41,22 @@ def log10_when_zeros( vals ):
     new_vals = np.log10(vals)
     new_vals[zero_idx] = 0.
     return(new_vals)
+
+def get_values( x, y, dy ):
+    non_zero = np.where( y != 0.0 )[0]
+    xvals = x[non_zero]
+    yvals = y[non_zero]
+    dyvals = dy[non_zero]
+    hidx = np.where( dyvals > 1. )[0]
+    if not hidx[0] == 0:
+        hidx = np.insert(hidx,0,hidx[0]-1)  
+        n_hidx = np.arange(0,hidx[0]+1)
+    else:
+        n_hidx = np.where( dyvals < 1. )[0]
+        hidx = np.insert( hidx,1,np.arange(1,np.min(tmp)+1))
+        if np.max(tmp) < np.max(hidx):
+            hidx = np.insert( hidx, len(hidx)-1, np.max(tmp) )
+    return( xvals, yvals, dyvals, n_hidx, hidx )
     
 
 ######################################################################

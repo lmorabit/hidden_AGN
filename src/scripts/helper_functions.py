@@ -42,21 +42,26 @@ def log10_when_zeros( vals ):
     new_vals[zero_idx] = 0.
     return(new_vals)
 
-def get_values( x, y, dy ):
-    non_zero = np.where( y != 0.0 )[0]
-    xvals = x[non_zero]
-    yvals = y[non_zero]
-    dyvals = dy[non_zero]
-    hidx = np.where( dyvals > 1. )[0]
-    if not hidx[0] == 0:
-        hidx = np.insert(hidx,0,hidx[0]-1)  
-        n_hidx = np.arange(0,hidx[0]+1)
+def get_values( x, y, dy, cutoff=0.7, useidx=True ):
+    if useidx:
+        non_zero = np.where( y != 0.0 )[0]
+        xvals = x[non_zero]
+        yvals = y[non_zero]
+        dyvals = dy[non_zero]
     else:
-        n_hidx = np.where( dyvals < 1. )[0]
-        tmp_hidx = []
-        tmp_hidx.append([hidx[0],np.arange(1,np.min(tmp)+1)[0]])
-        if np.max(tmp) < np.max(hidx):
-            hidx = np.insert( hidx, len(hidx)-1, np.max(tmp) )
+        xvals = x
+        yvals = y
+        dyvals = dy
+    ## first find the values that are valid
+    n_hidx = np.where( dyvals < cutoff )[0]
+    ## the ends will be where the problems are
+    hidx = []
+    if not n_hidx[0] == 0:
+        ## start of the list
+        hidx.append(np.arange(0,n_hidx[0]+1))
+    if not n_hidx[-1] == len(xvals)-1:
+        ## end of the list
+        hidx.append(np.arange(n_hidx[-1],len(xvals)))
     return( xvals, yvals, dyvals, n_hidx, hidx )
     
 
@@ -363,6 +368,59 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
     gal_agn_lum_func = np.asarray(gal_rg_rhos)
     gal_sf_lum_func = np.asarray(gal_sfg_rhos)
     return( lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func )
+
+def random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7, nsamp=1000 ):
+
+    ## first check if a file already exists
+    outfile = paths.data / 'errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'
+    if not os.path.exists(outfile):
+
+        ## randomly re-sample 1000 times
+        print('randomly resampling to get uncertainties')
+        nsamp = 1000
+        agn_lfs = np.zeros((len(agn_lum_func),nsamp))
+        sf_lfs = np.zeros((len(agn_lum_func),nsamp))
+        g_agn_lfs = np.zeros((len(agn_lum_func),nsamp))
+        g_sf_lfs = np.zeros((len(agn_lum_func),nsamp))
+        fracs = np.zeros(nsamp)
+
+        for i in np.arange(0,nsamp):
+            np.random.seed(i)
+            idx = np.random.randint(low=0,high=len(vmaxes),size=len(vmaxes))
+            fracs[i] = float(len(np.unique(idx))) / float(len(vmaxes))
+            lb, lf, agn_lf, sf_lf, g_agn_lf, g_sf_lf = get_RLFs( vmaxes[idx], zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
+            agn_lfs[:,i] = agn_lf
+            sf_lfs[:,i] = sf_lf
+            g_agn_lfs[:,i] = g_agn_lf
+            g_sf_lfs[:,i] = g_sf_lf
+
+
+        ## as I'm sampling with replacement, need to scale by the size of the resulting random sample
+        tmp = np.tile( agn_lum_func, (nsamp,1) ).transpose()
+        e_agn_lum_func = np.std( np.sqrt(fracs)*(agn_lfs-tmp),axis=1)
+        tmp = np.tile( sf_lum_func, (nsamp,1) ).transpose()
+        e_sf_lum_func = np.std( np.sqrt(fracs)*(sf_lfs-tmp),axis=1)
+        tmp = np.tile( gal_agn_lum_func, (nsamp,1) ).transpose()
+        e_gal_agn_lum_func = np.std( np.sqrt(fracs)*(g_agn_lfs-tmp), axis=1 )
+        tmp = np.tile( gal_sf_lum_func, (nsamp,1) ).transpose()
+        e_gal_sf_lum_func = np.std(np.sqrt(fracs)*(g_sf_lfs-tmp),axis=1)
+
+        ## replace small values with 0.03
+        e_agn_lum_func[np.where(e_agn_lum_func < 0.03)[0]] = 0.03
+        e_sf_lum_func[np.where(e_sf_lum_func < 0.03)[0]] = 0.03
+        e_gal_agn_lum_func[np.where(e_gal_agn_lum_func < 0.03)[0]] = 0.03
+        e_gal_sf_lum_func[np.where(e_gal_sf_lum_func < 0.03)[0]] = 0.03
+
+        ## write out to a file
+        t = Table()
+        t.add_column( e_agn_lum_func, name='e_agn_lum_func' )
+        t.add_column( e_sf_lum_func, name='e_sf_lum_func' )
+        t.add_column( e_gal_agn_lum_func, name='e_gal_agn_lum_func' )
+        t.add_column( e_gal_sf_lum_func, name='e_gal_sf_lum_func' )
+        t.write( outfile, format='fits' )
+    else:
+        t = Table.read( outfile, format='fits' )
+    return( t['e_agn_lum_func'], t['e_sf_lum_func'], t['e_gal_agn_lum_func'], t['e_gal_sf_lum_func'] )
 
 
 ######################################################################

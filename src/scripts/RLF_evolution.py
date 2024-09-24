@@ -113,7 +113,7 @@ p1.axes.set_xlim(plxlims)
 p1.axes.set_ylim(plylims)
 p1.xaxis.set_visible(False)
 p1.set_title('Star Formation',fontsize=20)
-p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
 ## Right panel (bottom): ratio of the RLFs by galaxies and process
@@ -126,7 +126,7 @@ for i in np.arange(0,len(z_lum_bins)):
     p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )    
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim((0.4,1.1))
-p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p2.set_ylabel(r'$\Delta$'+'RLF')
 
 ## integrate the ratio
@@ -153,7 +153,7 @@ p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
 p3.set_title('Active Galactic Nuclei',fontsize=20)
-p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
 ## Right panel (bottom): ratio of the RLFs by galaxies and process
@@ -166,7 +166,7 @@ for i in np.arange(0,len(z_lum_bins)):
     p4.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_agn[i], linewidth=3 )
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.7,2.5))
-p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p4.set_ylabel(r'$\Delta$'+'RLF')
 
 fig.savefig(paths.figures / 'RLF_evolution.png',dpi=300)

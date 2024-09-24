@@ -125,7 +125,7 @@ if len(idx2) > 0:
         p1.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22] , color=sfggalc, alpha=0.1, hatch='xxx', ec=None)
 p1.axes.set_xlim(plxlims)
 p1.axes.set_ylim(plylims)
-p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 handles, labels = p1.get_legend_handles_labels()
 order = [3,2,0,1]
@@ -153,7 +153,7 @@ if len(idx2) > 0:
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)
-p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 #p2.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 handles, labels = p2.get_legend_handles_labels()
 order = [3,2,0,1]
@@ -172,7 +172,7 @@ p3.plot( lum_bin_cens[non_zero], sf_lum_func[non_zero], color=sfc, label='SF pro
 p3.axes.set_xlim(plxlims)
 p3.axes.set_ylim(plylims)
 p3.xaxis.set_visible(False)
-p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p3.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p3.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 handles, labels = p3.get_legend_handles_labels()
 order = [3,1,2,0]
@@ -203,7 +203,7 @@ if len(idx2) > 0:
         p4.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], alpha=0.1, hatch='xxx', color=agnc, ec=None )
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.45,1.9))
-p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' W Hz'+r'$^{-1}$'+'])')
+p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p4.set_ylabel(r'$\Delta$RLF')
 p4.legend()
 fig.savefig(paths.figures / 'deep_fields_RLFs.png',dpi=300)

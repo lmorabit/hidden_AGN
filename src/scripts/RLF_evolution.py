@@ -198,7 +198,7 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     agnstr = agnstr + ' \\\\ \n' 
     f.write(agnstr)
     f.write( '    \\end{tabular}\n' )
-    f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
+    f.write( '    \\caption{Integrated $\\Delta$RLF, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
     f.write( '    \\label{tab:intvalues}\n' )
     f.write( '\\end{table}' )
 

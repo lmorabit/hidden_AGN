@@ -123,6 +123,7 @@ p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1] , color=sfggalc, al
 if len(idx2) > 0:
     for idx22 in idx2:
         p1.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22] , color=sfggalc, alpha=0.1, hatch='xxx', ec=None)
+p1.text( 20.5, -6.2, '0.003 < z < 0.3', fontsize=14 )
 p1.axes.set_xlim(plxlims)
 p1.axes.set_ylim(plylims)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
@@ -150,6 +151,7 @@ p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=sfc, alpha=0
 if len(idx2) > 0:
     for idx22 in idx2:
         p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], color=sfc, alpha=0.1, hatch='xxx', ec=None)
+p2.text( 20.5, -6.2, '0.003 < z < 0.3', fontsize=14 )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
 p2.yaxis.set_visible(False)

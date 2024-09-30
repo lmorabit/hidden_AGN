@@ -10,4 +10,4 @@ dependencies:
   - conda-forge::nest-asyncio
   - bioconda::snakemake
   - pip:
-      - showyourwork==0.4.4.dev45+gaa3c043
+      - git+https://github.com/showyourwork/showyourwork

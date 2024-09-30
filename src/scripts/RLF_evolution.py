@@ -24,7 +24,9 @@ si = -0.7
 zmin = 0.003  ## matches Mauch & Sadler 2007
 zmax = 0.3   ## matches Mauch & Sadler 2007
 dz = 0.0001  ## matches Cochrane and Kondapally
-
+lmin = 20.5
+lmax = 27
+dl = 0.3
 
 ## read in the data 
 t = Table.read( paths.static / 'redshift_bins.csv', format='csv' )
@@ -39,6 +41,13 @@ z_agn_lum_func = []
 z_sf_lum_func = []
 z_gal_agn_lum_func = []
 z_gal_sf_lum_func = []
+
+e_z_agn_lum_func = []
+e_z_sf_lum_func = []
+e_z_gal_agn_lum_func = []
+e_z_gal_sf_lum_func = []
+
+
 for i in np.arange(0,5):
     zmin = zbin_starts[i]
     zmax = zbin_ends[i]
@@ -48,17 +57,24 @@ for i in np.arange(0,5):
         infile = '{:s}_vmaxes_zmin{:s}_zmax{:s}.fits'.format(field,str(zmin),str(zmax))
         tmp = Table.read( paths.static / infile, format='fits' )
         vmaxes = vstack([vmaxes,tmp[keep_cols]],metadata_conflicts='silent')
-    lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=si )
+    lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
+    
+    e_agn_lum_func, e_sf_lum_func, e_gal_agn_lum_func, e_gal_sf_lum_func = random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si, nsamp=1000 )
+
     ## filter out unconstrained bins - AGN
     filter_idx = np.where( np.abs(agn_lum_func - lum_func) > 4. )[0]
     agn_lum_func[filter_idx] = 0. 
+    e_agn_lum_func[filter_idx] = 0. 
     filter_idx = np.where( np.abs(gal_agn_lum_func - lum_func) > 4. )[0]
-    gal_agn_lum_func[filter_idx] = 0. 
+    gal_agn_lum_func[filter_idx] = 0.
+    e_gal_agn_lum_func[filter_idx] = 0.  
     ## filter out unconstrained bins - SF
     filter_idx = np.where( np.logical_or( np.abs(sf_lum_func - lum_func) > 4., sf_lum_func > -1.8 ) )[0]
-    sf_lum_func[filter_idx] = 0. 
+    sf_lum_func[filter_idx] = 0.
+    e_sf_lum_func[filter_idx] = 0.  
     filter_idx = np.where( np.logical_or( np.abs(gal_sf_lum_func - lum_func) > 4., gal_sf_lum_func > -1.8 ) )[0]
     gal_sf_lum_func[filter_idx] = 0. 
+    e_gal_sf_lum_func[filter_idx] = 0. 
     ## add to redshift list
     z_lum_bins.append(lum_bins)
     z_lum_func.append(lum_func)
@@ -66,6 +82,12 @@ for i in np.arange(0,5):
     z_sf_lum_func.append(sf_lum_func)
     z_gal_agn_lum_func.append(gal_agn_lum_func)
     z_gal_sf_lum_func.append(gal_sf_lum_func)
+
+    e_z_agn_lum_func.append(e_agn_lum_func)
+    e_z_sf_lum_func.append(e_sf_lum_func)
+    e_z_gal_agn_lum_func.append(e_gal_agn_lum_func)
+    e_z_gal_sf_lum_func.append(e_gal_sf_lum_func)
+
 
 ## get the luminosity bin centres
 lum_bin_cens = z_lum_bins[0][0:-1] + 0.5*(z_lum_bins[0][1]-z_lum_bins[0][0])
@@ -91,19 +113,27 @@ fig = plt.figure( figsize=(fsizex,fsizey) )
 
 print('SF')
 sf_delta_int = []
+e_sf_delta_int = []
 
 ## STAR FORMATION
 p1 = plt.axes([0.07,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero = np.where( z_gal_sf_lum_func[i] < 0 )[0]
-    p1.plot( lum_bin_cens[non_zero], z_gal_sf_lum_func[i][non_zero], color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    gal_trapz = np.trapz( np.power( 10., z_gal_sf_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
-    non_zero = np.where( z_sf_lum_func[i] < 0  )[0]
-    p1.plot( lum_bin_cens[non_zero], z_sf_lum_func[i][non_zero], color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-    trapz = np.trapz( np.power( 10., z_sf_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
-    sf_delta_int.append(trapz / gal_trapz)
-    
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
+    p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    gal_trapz = np.trapz( np.power( 10., y ), x )
+    e_gal_trapz = trapezoid_error( 1./np.log(10.) * dy / y, x[1]-x[0] )
 
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
+    p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    trapz = np.trapz( np.power( 10., y ), x )
+    e_trapz = trapezoid_error( 1./np.log(10.) * dy / y, x[1]-x[0] )
+    sf_delta_int.append( trapz / gal_trapz )
+    e_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
+
+
+print(sf_delta_int)
+print(e_sf_delta_int)
+    
 l1 = p1.legend()
 dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
 lline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3, linestyle='dotted' )
@@ -116,13 +146,17 @@ p1.set_title('Star Formation',fontsize=20)
 p1.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
 p1.set_ylabel('log'+r'$_{10}$'+'('+r'$\rho$'+' [Mpc'+r'$^{-3}$'+' log'+r'$L^{-1}$'+'])')
 
-## Right panel (bottom): ratio of the RLFs by galaxies and process
+## Bottom panel: ratio of the RLFs by galaxies and process
 p2 = plt.axes([0.07,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p2.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 p2.plot( (19,27), (0.5,0.5), color='gray', linewidth=1, alpha=0.25 )
 for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < 0, z_gal_sf_lum_func[i] < 0 ) )[0]
     ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
+#    e_ratio = 
+#    x, y, dy, idx1, idx2 = get_values( lum_bin_cens
+
+
     p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )    
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim((0.4,1.1))

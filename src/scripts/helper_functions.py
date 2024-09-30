@@ -16,6 +16,10 @@ def add_sub_error( eX, eY ):
     result = np.sqrt( np.power( eX, 2. ) + np.power( eY, 2. ) )
     return( result )
 
+def mult_div_error( resval, vals, e_vals ):
+    result = resval * np.sqrt( np.sum( np.power( e_vals/vals, 2. ) ) )
+    return( result )
+
 def radio_power( obs_flux_Jy, redshift, spectral_index=-0.8):
     flux_cgs = obs_flux_Jy * 1e-23
     DL = cosmo.luminosity_distance(redshift).value * 3.086e24 ## convert to cm
@@ -31,6 +35,13 @@ def trapezoid_rule( yvals, dx ):
     add_terms = first_term + middle_terms + last_term
     return( add_terms )
 
+def trapezoid_error( e_yvals, dx ):
+    const = 0.5 * dx
+    errs = add_sub_error( e_yvals[0:-1], e_yvals[1:] )
+    individual_errs = const * errs
+    overall_err = np.sqrt( np.sum( np.power( individual_errs, 2. ) ) )
+    return( overall_err )
+
 def midpoint_rule( yvals, dx ):
     sum_vals = np.nansum( yvals * dx )
     return( sum_vals )
@@ -44,7 +55,7 @@ def log10_when_zeros( vals ):
 
 def get_values( x, y, dy, cutoff=0.7, useidx=True ):
     if useidx:
-        non_zero = np.where( y != 0.0 )[0]
+        non_zero = np.where( np.logical_and( y != 0.0, np.isfinite(y) ) )[0]
         xvals = x[non_zero]
         yvals = y[non_zero]
         dyvals = dy[non_zero]
@@ -372,7 +383,7 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
 def random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7, nsamp=1000 ):
 
     ## first check if a file already exists
-    outfile = paths.data / 'errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'
+    outfile = paths.data / 'errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
     if not os.path.exists(outfile):
 
         ## randomly re-sample 1000 times
@@ -484,8 +495,6 @@ def get_source_vmax( power, scaling_factor, power_to_flux_factor, V_DLs, complet
     ## calculate theta_z
     theta_sz = np.asarray(solid_angle_at_z) * np.asarray(completeness_at_z)
     integrand = V_DLs * theta_sz
-    ## trapezoid rule it?? 
-    #vmax = trapezoid_rule( integrand, 0.0001 )
     vmax = np.nansum( integrand )
     return(vmax)
 

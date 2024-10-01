@@ -7,6 +7,7 @@ dependencies:
   - conda-forge::progress
   - conda-forge::matplotlib==3.4.3
   - conda-forge::Flask
+  - conda-forge::pulp=2.8.0
   - conda-forge::nest-asyncio
   - bioconda::snakemake
   - pip:

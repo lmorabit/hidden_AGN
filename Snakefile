@@ -76,9 +76,7 @@ rule rlf_evolution:
 rule calculate_vars:
 	input: 
 		"src/static/en1_03_matched_inMOC_inHR.fits",
-		"src/static/en1_DR1_rms_masked.fits",
 		"src/static/lockman_03_matched_inMOC_inHR.fits",
-		"src/static/lockman_DR1_rms_masked.fits"
 	output:
 		"src/output/lockman_detectable.txt",
 		"src/output/en1_detectable.txt",

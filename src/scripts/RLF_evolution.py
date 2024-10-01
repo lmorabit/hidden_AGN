@@ -121,7 +121,7 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     gal_trapz = np.trapz( np.power( 10., y ), x )
-    e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * ( x[-1] - x[0] )
+    e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) #* ( x[-1] - x[0] )
 
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )

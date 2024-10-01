@@ -182,7 +182,7 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_agn_lum_func[i], e_z_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     # use rectangular integration
-    trapz = np.trapz( np.power( 10., z_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
+    trapz = np.sum( np.power( 10., y ) * dl )
     e_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
     ## ratio and errors
     agn_delta_int.append(trapz / gal_trapz)

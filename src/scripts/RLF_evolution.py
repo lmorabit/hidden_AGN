@@ -174,19 +174,20 @@ p3 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey
 for i in np.arange(0,len(z_lum_bins)):
     ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_agn_lum_func[i], e_z_gal_agn_lum_func[i] )
-    non_zero = np.where( z_gal_agn_lum_func[i] != 0.0 )[0]
-    print( x )
-    print( lum_bin_cens[non_zero] )
-    print( y )
-    print( z_gal_agn_lum_func[i][non_zero] )
-    p3.plot( lum_bin_cens[non_zero], z_gal_agn_lum_func[i][non_zero], color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    p3.plot( x, y, color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     # rectangular integration
     gal_trapz = np.sum( np.power( 10., y ) * dl )
     e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
-    non_zero = np.where( z_agn_lum_func[i] != 0.0 )[0]
-    p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    ## Process
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_agn_lum_func[i], e_z_agn_lum_func[i] )
+    p3.plot( x, y, color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    # use rectangular integration
     trapz = np.trapz( np.power( 10., z_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
+    e_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
+    ## ratio and errors
     agn_delta_int.append(trapz / gal_trapz)
+    e_agn_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
+
 l1 = p3.legend()
 dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
 lline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3, linestyle='dotted' )

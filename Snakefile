@@ -79,6 +79,9 @@ rule calculate_vars:
 		"src/static/en1_03_matched_inMOC_inHR.fits",
 		"src/static/lockman_03_matched_inMOC_inHR.fits",
 	output:
-		"src/output/lockman_detectable.txt"
+                "src/tex/output/en1_detectable.txt",
+                "src/tex/output/flowchart_numbers.txt",
+                "src/tex/output/integrated_differences.txt",
+                "src/tex/output/lockman_detectable.txt"
 	script:
 		"src/scripts/flowchart_numbers.py"

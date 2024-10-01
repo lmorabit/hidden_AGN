@@ -118,24 +118,21 @@ e_sf_delta_int = []
 ## STAR FORMATION
 p1 = plt.axes([0.07,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
+    ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    ## use rectangular integration 
+    # use rectangular integration 
     gal_trapz = np.sum( np.power( 10., y ) * dl )
     e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
-
+    ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-    ## use rectangular integration
+    # use rectangular integration
     trapz = np.sum( np.power( 10., y ) * dl )
     e_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl
-
+    ## ratio and errors
     sf_delta_int.append( trapz / gal_trapz )
     e_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
-
-
-print(sf_delta_int)
-print(e_sf_delta_int)
     
 l1 = p1.legend()
 dline = matplotlib.lines.Line2D([0],[0], color='black', linewidth=3 )
@@ -170,13 +167,22 @@ p2.set_ylabel(r'$\Delta$'+'RLF')
 
 print('AGN')
 agn_delta_int = []
+e_agn_delta_int = []
 
 ## ACTIVE GALACTIC NUCLEI
 p3 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
+    ## Galaxies
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_agn_lum_func[i], e_z_gal_agn_lum_func[i] )
     non_zero = np.where( z_gal_agn_lum_func[i] != 0.0 )[0]
+    print( x )
+    print( lum_bin_cens[non_zero] )
+    print( y )
+    print( z_gal_agn_lum_func[i][non_zero] )
     p3.plot( lum_bin_cens[non_zero], z_gal_agn_lum_func[i][non_zero], color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    gal_trapz = np.trapz( np.power( 10., z_gal_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
+    # rectangular integration
+    gal_trapz = np.sum( np.power( 10., y ) * dl )
+    e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
     non_zero = np.where( z_agn_lum_func[i] != 0.0 )[0]
     p3.plot( lum_bin_cens[non_zero], z_agn_lum_func[i][non_zero], color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     trapz = np.trapz( np.power( 10., z_agn_lum_func[i][non_zero] ), lum_bin_cens[non_zero] )
@@ -227,14 +233,13 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     sfstr = 'SF ' 
     for i in np.arange(0,len(sf_delta_int)):
         sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
-        sfstr = sfstr + '{\\raisebox{0.5ex}{\\tiny$\\substack{+' + '{:1.2f}'.format(e_up_sf_delta_int[i]) + '\\\\ -' + '{:1.2f}'.format(e_lo_sf_delta_int[i]) + '}$}}'
-        #sfstr = sfstr + '$^{+' + '{:1.1f}'.format(e_up_sf_delta_int[i]) + '}$'
-        #sfstr = sfstr + '$_{-' + '{:1.1f}'.format(e_lo_sf_delta_int[i]) + '}$'
+        sfstr = sfstr + '$\\pm$' + '{:1.1f}'.format(e_sf_delta_int[i]) 
     sfstr = sfstr + ' \\\\ \n' 
     f.write(sfstr)
     agnstr = 'AGN ' 
     for i in np.arange(0,len(agn_delta_int)):
         agnstr = agnstr + ' & {:1.2f}'.format(agn_delta_int[i])
+        agnstr = agnstr + '$\\pm$' + '{:1.1f}'.format(e_agn_delta_int[i]) 
     agnstr = agnstr + ' \\\\ \n' 
     f.write(agnstr)
     f.write( '    \\end{tabular}\n' )
@@ -243,48 +248,4 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\end{table}' )
 
 
-'''
-with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
-    f.write( '\\begin{table}\n' )
-    f.write( '    \\centering\n' )
-    f.write( '    \\begin{tabular}{c|l|l}\n' )
-    f.write( ' redshift & SF & AGN \\\\ \\hline\n' )
-    for i in np.arange(0,len(z_lum_bins)):
-        f.write( '{:s} $<$ z $<$ {:s} & {:1.2f}  & {:1.2f}  \\\\ \n'.format(str(zbin_starts[i]),str(zbin_ends[i]),sf_delta_int[i],agn_delta_int[i]) )
-    f.write( '    \\end{tabular}\n' )
-    f.write( '    \\caption{Integrated contribution of each process, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
-    f.write( '    \\label{tab:intvalues}\n' )
-    f.write( '\\end{table}' )
-
-'''
-
-
-
-
-'''
-Redshift bins
-
-Rohit (AGN)
-0.5 - 1.0
-1.0 - 1.5
-1.5 - 2.0
-2.0 - 2.5
-
-
-Rachael (SFGs)
-0.1 - 0.4 
-0.4 - 0.6 
-0.6 - 0.8
-0.8 - 1.0 
-1.0 - 1.3
-1.3 - 1.6
-1.6 - 2.0 
-2.0 - 2.5
-2.5 - 3.3
-3.3 - 4.6
-4.6 - 5.7
-
-
-
-'''
 

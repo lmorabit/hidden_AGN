@@ -234,8 +234,9 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     sfstr = 'SF ' 
     for i in np.arange(0,len(sf_delta_int)):
         sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
-        sfstr = sfstr + '$^{' + '{:1.1f}'.format(e_up_sf_delta_int[i]) + '}$'
-        sfstr = sfstr + '$_{' + '{:1.1f}'.format(e_lo_sf_delta_int[i]) + '}$'
+        sfstr = sfstr + '{\\raisebox{0.5ex}{\\tiny$\\substack{+' + '{:1.2f}'.format(e_up_sf_delta_int[i]) + '\\\\ -' + '{:1.2f}'.format(e_lo_sf_delta_int[i]) + '}$}}'
+        #sfstr = sfstr + '$^{+' + '{:1.1f}'.format(e_up_sf_delta_int[i]) + '}$'
+        #sfstr = sfstr + '$_{-' + '{:1.1f}'.format(e_lo_sf_delta_int[i]) + '}$'
     sfstr = sfstr + ' \\\\ \n' 
     f.write(sfstr)
     agnstr = 'AGN ' 

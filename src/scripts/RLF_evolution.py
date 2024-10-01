@@ -122,14 +122,14 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     # use rectangular integration 
-    gal_trapz = np.sum( np.power( 10., y ) * dl )
-    e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
+    gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
+    e_gal_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     # use rectangular integration
-    trapz = np.sum( np.power( 10., y ) * dl )
-    e_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl
+    trapz = np.sum( np.power( 10., y[idx1] ) * dl )
+    e_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl
     ## ratio and errors
     sf_delta_int.append( trapz / gal_trapz )
     e_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
@@ -176,14 +176,14 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_agn_lum_func[i], e_z_gal_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     # rectangular integration
-    gal_trapz = np.sum( np.power( 10., y ) * dl )
-    e_gal_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
+    gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
+    e_gal_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_agn_lum_func[i], e_z_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     # use rectangular integration
-    trapz = np.sum( np.power( 10., y ) * dl )
-    e_trapz = np.sqrt( np.sum( np.power( dy * np.log( 10. ) * np.power( 10., y ), 2. ) ) ) * dl 
+    trapz = np.sum( np.power( 10., y[idx1] ) * dl )
+    e_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
     ## ratio and errors
     agn_delta_int.append(trapz / gal_trapz)
     e_agn_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
@@ -234,13 +234,13 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     sfstr = 'SF ' 
     for i in np.arange(0,len(sf_delta_int)):
         sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
-        sfstr = sfstr + '$\\pm$' + '{:1.1f}'.format(e_sf_delta_int[i]) 
+        sfstr = sfstr + '$\\pm$' + '{:1.2f}'.format(e_sf_delta_int[i]) 
     sfstr = sfstr + ' \\\\ \n' 
     f.write(sfstr)
     agnstr = 'AGN ' 
     for i in np.arange(0,len(agn_delta_int)):
         agnstr = agnstr + ' & {:1.2f}'.format(agn_delta_int[i])
-        agnstr = agnstr + '$\\pm$' + '{:1.1f}'.format(e_agn_delta_int[i]) 
+        agnstr = agnstr + '$\\pm$' + '{:1.2f}'.format(e_agn_delta_int[i]) 
     agnstr = agnstr + ' \\\\ \n' 
     f.write(agnstr)
     f.write( '    \\end{tabular}\n' )

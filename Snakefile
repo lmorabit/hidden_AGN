@@ -81,7 +81,6 @@ rule calculate_vars:
 	output:
                 "src/tex/output/en1_detectable.txt",
                 "src/tex/output/flowchart_numbers.txt",
-                "src/tex/output/integrated_differences.txt",
                 "src/tex/output/lockman_detectable.txt"
 	script:
 		"src/scripts/flowchart_numbers.py"

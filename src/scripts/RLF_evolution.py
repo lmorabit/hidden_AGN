@@ -136,8 +136,8 @@ for i in np.arange(0,len(z_lum_bins)):
     e_lo_trapz = trapz - lo_trapz
 
     sf_delta_int.append( trapz / gal_trapz )
-    e_lo_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_lo_trapz,e_lo_gal_trapz]) ) )
-    e_up_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_up_trapz,e_up_gal_trapz]) ) )
+    e_lo_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_lo_trapz,e_up_gal_trapz]) ) )
+    e_up_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_up_trapz,e_lo_gal_trapz]) ) )
 
 
 print(sf_delta_int)

@@ -113,6 +113,7 @@ fig = plt.figure( figsize=(fsizex,fsizey) )
 
 print('SF')
 sf_delta_int = []
+e_sf_delta_int = []
 e_lo_sf_delta_int = []
 e_up_sf_delta_int = []
 
@@ -122,6 +123,7 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     gal_trapz = np.trapz( np.power( 10., y ), x )
+    e_gal_trapz = np.power(lum_bin_cens[-1]-lum_bin_cens[0],3.) / (12 * np.power( len(lum_bin_cens), 2. ) ) * np.max( 12 * np.power( x, 2. ) )
     up_gal_trapz = np.trapz( np.power( 10., y+dy), x )
     lo_gal_trapz = np.trapz( np.power( 10., y-dy), x )
     e_up_gal_trapz = up_gal_trapz - gal_trapz
@@ -130,17 +132,20 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     trapz = np.trapz( np.power( 10., y ), x )
+    e_trapz = np.power(lum_bin_cens[-1]-lum_bin_cens[0],3.) / (12 * np.power( len(lum_bin_cens), 2. ) ) * np.max( 12 * np.power( x, 2. ) )
     up_trapz = np.trapz( np.power( 10., y+dy), x )
     lo_trapz = np.trapz( np.power( 10., y-dy), x )
     e_up_trapz = up_trapz - trapz
     e_lo_trapz = trapz - lo_trapz
 
     sf_delta_int.append( trapz / gal_trapz )
+    e_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_trapz,e_gal_trapz]) ) )
     e_lo_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_lo_trapz,e_up_gal_trapz]) ) )
     e_up_sf_delta_int.append( mult_div_error( trapz/gal_trapz, np.asarray([trapz,gal_trapz]), np.asarray([e_up_trapz,e_lo_gal_trapz]) ) )
 
 
 print(sf_delta_int)
+print(e_sf_delta_int)
 print(e_lo_sf_delta_int)
 print(e_up_sf_delta_int)
     

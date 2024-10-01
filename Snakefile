@@ -68,7 +68,8 @@ rule rlf_evolution:
                 "src/data/en1_vmaxes_zmin3.3_zmax4.6.fits",
                 "src/data/en1_vmaxes_zmin4.6_zmax5.7.fits"
 	output:
-		"RLF_evolution.png"
+		"RLF_evolution.png",
+		"src/output/integrated_differences.txt"
 	conda:
 		"environment.yml"
 	script:

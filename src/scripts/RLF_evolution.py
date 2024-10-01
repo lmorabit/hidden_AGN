@@ -207,7 +207,7 @@ fig.savefig(paths.figures / 'RLF_evolution.png',dpi=300)
 fig.clear()
 plt.close()
 
-## write a table
+## write an output table
 with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
     f.write( '    \\centering\n' )

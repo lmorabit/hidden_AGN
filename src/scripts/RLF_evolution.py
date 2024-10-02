@@ -115,6 +115,8 @@ print('SF')
 sf_delta_int = []
 e_sf_delta_int = []
 
+z_sf_valid = []
+
 ## STAR FORMATION
 p1 = plt.axes([0.07,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
 for i in np.arange(0,len(z_lum_bins)):
@@ -122,6 +124,7 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
     p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None )
+    sf_idx1 = idx1
     # use rectangular integration 
     gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_gal_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
@@ -129,6 +132,8 @@ for i in np.arange(0,len(z_lum_bins)):
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
     p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None, hatch='x' )
+    sf_valid = np.intersect1d( sf_idx1, idx1 )
+    z_sf_valid.append(sf_valid)
     # use rectangular integration
     trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl
@@ -157,6 +162,12 @@ for i in np.arange(0,len(z_lum_bins)):
     ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
     e_ratio = ratio * np.sqrt( np.power( e_z_sf_lum_func[i][non_zero_idx]/z_sf_lum_func[i][non_zero_idx], 2. ) + np.power( e_z_gal_sf_lum_func[i][non_zero_idx]/z_gal_sf_lum_func[i][non_zero_idx], 2. ) )
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )    
+    idx1 = z_sf_valid[i]
+    idx2 = []
+    if not idx1[0] == 0:
+        idx2.append(np.arange(0,idx1[0]+1))
+    if not np.max(idx1) == len(x)-1:
+        idx2.append(np.arange(idx1[-1],len(x)))
     p2.plot( x, y, color=zcols_sf[i], linewidth=3 )
     p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=zcols_sf[i], ec=None )
     if len(idx2) > 0:

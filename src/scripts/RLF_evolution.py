@@ -252,28 +252,17 @@ plt.close()
 with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
     f.write( '    \\centering\n' )
-    f.write( '    \\begin{tabular}{lccccc}\n' )
+    f.write( '    \\begin{tabular}{llcc}\n' )
     zmin = ' $z_{min}$ '
     zmax = ' $z_{max}$ '
+    hdrstr = zmin + '&' + zmax + ' SF & AGN \\\\ \\hline\n'
+    f.write( hdrstr )
     for i in np.arange(0,len(z_lum_bins)):
-        zmin = zmin + ' & {:s}'.format(str(zbin_starts[i]))
-        zmax = zmax + ' & {:s}'.format(str(zbin_ends[i]))
-    zmin = zmin + ' \\\\ \n'
-    zmax = zmax + ' \\\\ \hline \n'
-    f.write( zmin ) 
-    f.write( zmax )
-    sfstr = 'SF ' 
-    for i in np.arange(0,len(sf_delta_int)):
-        sfstr = sfstr + ' & {:1.2f}'.format(sf_delta_int[i])
-        sfstr = sfstr + '$\\pm$' + '{:1.2f}'.format(e_sf_delta_int[i]) 
-    sfstr = sfstr + ' \\\\ \n' 
-    f.write(sfstr)
-    agnstr = 'AGN ' 
-    for i in np.arange(0,len(agn_delta_int)):
-        agnstr = agnstr + ' & {:1.2f}'.format(agn_delta_int[i])
-        agnstr = agnstr + '$\\pm$' + '{:1.2f}'.format(e_agn_delta_int[i]) 
-    agnstr = agnstr + ' \\\\ \n' 
-    f.write(agnstr)
+        zstr = ' {:s} & {:s} & '.format(str(zbin_starts[i]), str(zbin_ends[i] )
+        sfstr = '{:1.2f}$\\pm${:1.2f} & '.format( sf_delta_int[i], e_sf_delta_int[i] )
+        agnstr = '{:1.2f}$\\pm${:1.2f} \\\\ \n '.format( agn_delta_int[i], e_agn_delta_int[i] )
+        linestr = zstr + sfstr + agnstr
+        f.write(linestr)
     f.write( '    \\end{tabular}\n' )
     f.write( '    \\caption{Integrated $\\Delta$RLF, calculated as the ratio of areas under the RLF curve by process to the RLF curve by galaxy classification.}\n' )
     f.write( '    \\label{tab:intvalues}\n' )

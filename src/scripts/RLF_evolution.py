@@ -123,7 +123,7 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None )
+    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color='white', alpha=0.4, ec=zcols_sf[i] )
     sf_idx1 = idx1
     # use rectangular integration 
     gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
@@ -131,7 +131,7 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None, hatch='x' )
+    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color='white', alpha=0.4, ec=zcols_sf[i], linestyle='dotted' )
     sf_valid = np.intersect1d( sf_idx1, idx1 )
     z_sf_valid.append(sf_valid)
     # use rectangular integration

@@ -255,7 +255,7 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '    \\begin{tabular}{llcc}\n' )
     zmin = ' $z_{min}$ '
     zmax = ' $z_{max}$ '
-    hdrstr = zmin + '&' + zmax + ' SF & AGN \\\\ \\hline\n'
+    hdrstr = zmin + '&' + zmax + ' & SF & AGN \\\\ \\hline\n'
     f.write( hdrstr )
     for i in np.arange(0,len(z_lum_bins)):
         zstr = ' {:s} & {:s} & '.format(str(zbin_starts[i]), str(zbin_ends[i]) )

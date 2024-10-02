@@ -198,7 +198,7 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_agn_lum_func[i], e_z_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-    agn_valid = np.intsersect1d( agn_idx1, idx1 )
+    agn_valid = np.intersect1d( agn_idx1, idx1 )
     z_agn_valid.append(agn_valid)
     # use rectangular integration
     trapz = np.sum( np.power( 10., y[idx1] ) * dl )

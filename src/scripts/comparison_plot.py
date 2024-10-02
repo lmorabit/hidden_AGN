@@ -75,12 +75,14 @@ p1.plot( kondapally['logL150'], kondapally['logPhi'], color=kond, label='Kondapa
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens, gal_agn_lum_func, e_gal_agn_lum_func )
 p1.plot( x, y, color=agngalc, label='AGN galaxies', linewidth=3, linestyle='dotted' )
 p1.fill_between(x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=agngalc, alpha=0.4, ec=None)
+agn_idx1 = idx1
 if len(idx2) > 0:
     for idx22 in idx2:
         p1.fill_between(x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], color=agngalc, alpha=0.1, hatch='xxx', ec=None)
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens, gal_sf_lum_func, e_gal_sf_lum_func )
 p1.plot( x, y, color=sfggalc, label='SF galaxies', linewidth=3, linestyle='dotted' )
 p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1] , color=sfggalc, alpha=0.4, ec=None)
+sf_idx1 = idx1
 if len(idx2) > 0:
     for idx22 in idx2:
         p1.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22] , color=sfggalc, alpha=0.1, hatch='xxx', ec=None)
@@ -102,16 +104,18 @@ p2.plot( kondapally['logL150'], kondapally['logPhi'], color=kond, label='Kondapa
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens, agn_lum_func, e_agn_lum_func )
 p2.plot( x, y, color=agnc, label='AGN process', linewidth=3, alpha=0.75 )
 p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=agnc, alpha=0.4, ec=None)
+agn_valid = np.intersect1d( agn_idx1, idx1 )
 if len(idx2) > 0:
     for idx22 in idx2:
         p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], color=agnc, alpha=0.1, hatch='xxx', ec=None)
-
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens, sf_lum_func, e_sf_lum_func )
 p2.plot( x, y, color=sfc, label='SF process', linewidth=3, alpha=0.75 )
 p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=sfc, alpha=0.4, ec=None)
+sf_valid = np.intersect1d( sf_idx1, idx1 )
 if len(idx2) > 0:
     for idx22 in idx2:
         p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], color=sfc, alpha=0.1, hatch='xxx', ec=None)
+        
 p2.text( 20.5, -6.2, '0.003 < z < 0.3', fontsize=14 )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim(plylims)
@@ -149,6 +153,12 @@ non_zero_idx = np.where( np.logical_and( sf_lum_func != 0, gal_sf_lum_func != 0 
 ratio = np.power(10., sf_lum_func[non_zero_idx] ) / np.power( 10., gal_sf_lum_func[non_zero_idx] )
 e_ratio = ratio * np.sqrt( np.power( e_sf_lum_func[non_zero_idx]/sf_lum_func[non_zero_idx], 2. ) + np.power( e_gal_sf_lum_func[non_zero_idx]/gal_sf_lum_func[non_zero_idx], 2. ) )
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )
+idx1 = np.intersect1d( sf_valid, idx1 )
+idx2 = []
+if not idx1[0] == 0:
+    idx2.append(np.arange(0,idx1[0]+1))
+if not np.max(idx1) == len(x)-1:
+    idx2.append(np.arange(idx1[-1],len(x)))
 p4.plot( x, y, color=sfc, label='SF', linewidth=3 )
 p4.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=sfc, ec=None )
 if len(idx2) > 0:
@@ -159,6 +169,12 @@ non_zero_idx = np.where( np.logical_and( agn_lum_func != 0, gal_agn_lum_func != 
 ratio = np.power(10., agn_lum_func[non_zero_idx]) / np.power( 10., gal_agn_lum_func[non_zero_idx]) 
 e_ratio = ratio * np.sqrt( np.power( e_agn_lum_func[non_zero_idx]/agn_lum_func[non_zero_idx], 2. ) + np.power( e_gal_agn_lum_func[non_zero_idx]/gal_agn_lum_func[non_zero_idx], 2. ) )
 x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )
+idx1 = np.intersect1d( agn_valid, idx1 )
+idx2 = []
+if not idx1[0] == 0:
+    idx2.append(np.arange(0,idx1[0]+1))
+if not np.max(idx1) == len(x)-1:
+    idx2.append(np.arange(idx1[-1],len(x)))
 p4.plot( x, y, color=agnc, label='AGN', linewidth=3 )
 p4.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=agnc, ec=None )
 if len(idx2) > 0:

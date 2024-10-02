@@ -280,4 +280,25 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\end{table}' )
 
 
+## also add up all the redshifts ...
+sf_mean = np.mean(sf_delta_int)
+## uncertainty on mean, but for independent measurements of the same variable
+e_sf_mean = np.sqrt( np.sum( np.power( (np.asarray(sf_delta_int)+np.asarray(e_sf_delta_int))-sf_mean, 2. ) ) / len(sf_delta_int) ) / len(sf_delta_int)
+## simple addition
+# e_sf_mean = np.sqrt( np.sum( np.power( np.asarray(e_sf_delta_int), 2. ) ) / len(sf_delta_int) )
+
+agn_mean = np.mean(agn_delta_int)
+## uncertainty on mean, but for independent measurements of the same variable
+e_agn_mean = np.sqrt( np.sum( np.power( (np.asarray(agn_delta_int)+np.asarray(e_agn_delta_int))-agn_mean, 2. ) ) / len(agn_delta_int) ) / len(sf_delta_int)
+## simple addition
+# e_agn_mean = np.sqrt( np.sum( np.power( np.asarray(e_agn_delta_int), 2. ) ) / len(agn_delta_int) )
+
+with open( paths.output / 'average_integrated_differences.txt', 'w' ) as f:
+    printstr = 'The mean across all redshift bins is {:1.2f}$\\pm${:1.2f} for SF and {:1.2f}$\\pm${:1.2f} for AGN.  '
+    f.write( printstr )
+
+
+
+
+
 

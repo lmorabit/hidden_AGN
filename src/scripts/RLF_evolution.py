@@ -123,7 +123,7 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
-    p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None )
+    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None )
     sf_idx1 = idx1
     # use rectangular integration 
     gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
@@ -131,7 +131,7 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
-    p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None, hatch='x' )
+    #p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None, hatch='x' )
     sf_valid = np.intersect1d( sf_idx1, idx1 )
     z_sf_valid.append(sf_valid)
     # use rectangular integration
@@ -172,7 +172,7 @@ for i in np.arange(0,len(z_lum_bins)):
     p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=zcols_sf[i], ec=None )
     if len(idx2) > 0:
         for idx22 in idx2:
-            p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], alpha=0.1, hatch='xxx', color=zcols_sf[i], ec=None )
+            p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], alpha=0.2, hatch='xxx', color=zcols_sf[i], ec=None )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim((0.4,1.1))
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
@@ -183,6 +183,7 @@ p2.set_ylabel(r'$\Delta$'+'RLF')
 print('AGN')
 agn_delta_int = []
 e_agn_delta_int = []
+z_agn_valid = []
 
 ## ACTIVE GALACTIC NUCLEI
 p3 = plt.axes([0.14+sbsizex*fsizey/fsizex,0.42,sbsizex*fsizey/fsizex,0.6*sbsizey])
@@ -190,12 +191,15 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_agn_lum_func[i], e_z_gal_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    agn_idx1 = idx1
     # rectangular integration
     gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_gal_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_agn_lum_func[i], e_z_agn_lum_func[i] )
     p3.plot( x, y, color=zcols_agn[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    agn_valid = np.intsersect1d( agn_idx1, idx1 )
+    z_agn_valid.append(agn_valid)
     # use rectangular integration
     trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
@@ -224,6 +228,12 @@ for i in np.arange(0,len(z_lum_bins)):
     ratio = np.power(10., z_agn_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_agn_lum_func[i][non_zero_idx] )
     e_ratio = ratio * np.sqrt( np.power( e_z_agn_lum_func[i][non_zero_idx]/z_agn_lum_func[i][non_zero_idx], 2. ) + np.power( e_z_gal_agn_lum_func[i][non_zero_idx]/z_gal_agn_lum_func[i][non_zero_idx], 2. ) )
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )    
+    idx1 = z_agn_valid[i]
+    idx2 = []
+    if not idx1[0] == 0:
+        idx2.append(np.arange(0,idx1[0]+1))
+    if not np.max(idx1) == len(x)-1:
+        idx2.append(np.arange(idx1[-1],len(x)))
     p4.plot( x, y, color=zcols_agn[i], linewidth=3 )
     p4.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=zcols_agn[i], ec=None )
     if len(idx2) > 0:

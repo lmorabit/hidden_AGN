@@ -153,13 +153,15 @@ p2 = plt.axes([0.07,0.1,sbsizex*fsizey/fsizex,0.4*sbsizey])
 p2.plot( (19,27), (1,1), color='gray', linestyle='dashed', linewidth=1.5 )
 p2.plot( (19,27), (0.5,0.5), color='gray', linewidth=1, alpha=0.25 )
 for i in np.arange(0,len(z_lum_bins)):
-    non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < 0, z_gal_sf_lum_func[i] < 0 ) )[0]
+    non_zero_idx = np.where( np.logical_and( z_sf_lum_func[i] < 0, z_gal_sf_lum_func[i] < 0 ) )[0]    
     ratio = np.power(10., z_sf_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_sf_lum_func[i][non_zero_idx] )
-#    e_ratio = 
-#    x, y, dy, idx1, idx2 = get_values( lum_bin_cens
-
-
-    p2.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_sf[i], linewidth=3 )    
+    e_ratio = ratio * np.sqrt( np.power( e_z_sf_lum_func[i][non_zero_idx]/z_sf_lum_func[i][non_zero_idx], 2. ) + np.power( e_z_gal_sf_lum_func[i][non_zero_idx]/z_gal_sf_lum_func[i][non_zero_idx], 2. ) )
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )    
+    p2.plot( x, y, color=zcols_sf[i], linewidth=3 )
+    p2.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=zcols_sf[i], ec=None )
+    if len(idx2) > 0:
+        for idx22 in idx2:
+            p2.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], alpha=0.1, hatch='xxx', color=zcols_sf[i], ec=None )
 p2.axes.set_xlim(plxlims)
 p2.axes.set_ylim((0.4,1.1))
 p2.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')
@@ -209,7 +211,13 @@ p4.plot( (19,27), (2,2), color='gray', linewidth=1, alpha=0.25 )
 for i in np.arange(0,len(z_lum_bins)):
     non_zero_idx = np.where( np.logical_and( z_agn_lum_func[i] != 0, z_gal_agn_lum_func[i] != 0 ) )[0]
     ratio = np.power(10., z_agn_lum_func[i][non_zero_idx] ) / np.power( 10., z_gal_agn_lum_func[i][non_zero_idx] )
-    p4.plot( lum_bin_cens[non_zero_idx], ratio, color=zcols_agn[i], linewidth=3 )
+    e_ratio = ratio * np.sqrt( np.power( e_z_agn_lum_func[i][non_zero_idx]/z_agn_lum_func[i][non_zero_idx], 2. ) + np.power( e_z_gal_agn_lum_func[i][non_zero_idx]/z_gal_agn_lum_func[i][non_zero_idx], 2. ) )
+    x, y, dy, idx1, idx2 = get_values( lum_bin_cens[non_zero_idx], ratio, e_ratio, useidx=False )    
+    p4.plot( x, y, color=zcols_agn[i], linewidth=3 )
+    p4.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], alpha=0.4, color=zcols_agn[i], ec=None )
+    if len(idx2) > 0:
+        for idx22 in idx2:
+            p4.fill_between( x[idx22], y[idx22]-dy[idx22], y[idx22]+dy[idx22], alpha=0.1, hatch='xxx', color=zcols_agn[i], ec=None )
 p4.axes.set_xlim(plxlims)
 p4.axes.set_ylim((0.7,2.5))
 p4.set_xlabel('log'+r'$_{10}$'+'('+r'$L_{\mathrm{144 MHz}}$'+' [W Hz'+r'$^{-1}$'+'])')

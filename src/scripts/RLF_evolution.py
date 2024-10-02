@@ -258,7 +258,7 @@ with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     hdrstr = zmin + '&' + zmax + ' SF & AGN \\\\ \\hline\n'
     f.write( hdrstr )
     for i in np.arange(0,len(z_lum_bins)):
-        zstr = ' {:s} & {:s} & '.format(str(zbin_starts[i]), str(zbin_ends[i] )
+        zstr = ' {:s} & {:s} & '.format(str(zbin_starts[i]), str(zbin_ends[i]) )
         sfstr = '{:1.2f}$\\pm${:1.2f} & '.format( sf_delta_int[i], e_sf_delta_int[i] )
         agnstr = '{:1.2f}$\\pm${:1.2f} \\\\ \n '.format( agn_delta_int[i], e_agn_delta_int[i] )
         linestr = zstr + sfstr + agnstr

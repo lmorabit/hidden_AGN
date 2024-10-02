@@ -294,7 +294,7 @@ e_agn_mean = np.sqrt( np.sum( np.power( (np.asarray(agn_delta_int)+np.asarray(e_
 # e_agn_mean = np.sqrt( np.sum( np.power( np.asarray(e_agn_delta_int), 2. ) ) / len(agn_delta_int) )
 
 with open( paths.output / 'average_integrated_differences.txt', 'w' ) as f:
-    printstr = 'The mean across all redshift bins is {:1.2f}$\\pm${:1.2f} for SF and {:1.2f}$\\pm${:1.2f} for AGN.  '
+    printstr = 'The mean across all redshift bins is {:1.2f}$\\pm${:1.2f} for SF and {:1.2f}$\\pm${:1.2f} for AGN. '.format( sf_mean, e_sf_mean, agn_mean, e_agn_mean )
     f.write( printstr )
 
 

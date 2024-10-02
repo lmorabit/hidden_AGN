@@ -220,7 +220,6 @@ plt.close()
 ## write an output table
 with open( paths.output / 'integrated_differences.txt', 'w' ) as f:
     f.write( '\\begin{table}\n' )
-    f.write( '\\footnotesize\n' )
     f.write( '    \\centering\n' )
     f.write( '    \\begin{tabular}{lccccc}\n' )
     zmin = ' $z_{min}$ '

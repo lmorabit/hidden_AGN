@@ -121,12 +121,14 @@ for i in np.arange(0,len(z_lum_bins)):
     ## Galaxies
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_gal_sf_lum_func[i], e_z_gal_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], linewidth=3, alpha=0.75, linestyle='dotted' )
+    p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None )
     # use rectangular integration 
     gal_trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_gal_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl 
     ## Process
     x, y, dy, idx1, idx2 = get_values( lum_bin_cens, z_sf_lum_func[i], e_z_sf_lum_func[i] )
     p1.plot( x, y, color=zcols_sf[i], label='{:s} < z < {:s}'.format(str(zbin_starts[i]),str(zbin_ends[i])), linewidth=3 )
+    p1.fill_between( x[idx1], y[idx1]-dy[idx1], y[idx1]+dy[idx1], color=zcols_sf[i], alpha=0.4, ec=None, hatch='x' )
     # use rectangular integration
     trapz = np.sum( np.power( 10., y[idx1] ) * dl )
     e_trapz = np.sqrt( np.sum( np.power( dy[idx1] * np.log( 10. ) * np.power( 10., y[idx1] ), 2. ) ) ) * dl

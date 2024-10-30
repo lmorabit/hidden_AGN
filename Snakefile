@@ -9,7 +9,7 @@ rule generate_vmax:
 	output:
 		directory("src/data/vmaxes")
 	cache:
-		true
+		True
 	conda:
 		"environment.yml"
 	script:

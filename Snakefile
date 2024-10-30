@@ -1,15 +1,19 @@
-rule completeness:
+rule generate_vmax:
 	input:
-                "src/static/cochrane_2023_table1.csv",
-                "src/static/cochrane_2023_tableA1.csv",
-                "src/static/kondapally_2022_table1.csv",
-                "src/static/kondapally_2022_table2.csv"
+                "src/data/kondapally_2022_table1.csv",
+                "src/data/cochrane_2023_tableA1.csv",
+		"src/static/en1_03_matched_inMOC_inHR.fits",
+		"src/static/lockman_03_matched_inMOC_inHR.fits",
+		"src/static/en1_DR1_rms_masked.fits",
+		"src/static/lockman_DR1_rms_masked.fits"
 	output:
-		"completeness.png"
+		directory("src/data/vmaxes")
+	cache:
+		true
 	conda:
 		"environment.yml"
 	script:
-		"src/scripts/completeness.py"
+		"src/scripts/generateVmaxes.py"
 rule comparison_plot:
         input:
                 "src/static/kondapally_2022_table2.csv",
@@ -22,20 +26,8 @@ rule comparison_plot:
                 "environment.yml"
         script:
                 "src/scripts/comparison_plot.py"
-rule simba_comparison:
-	input:
-		"src/static/RLFs_flux_lim.csv",
-		"src/static/lockman_vmaxes_zmin0.003_zmax0.3.fits",
-		"src/static/en1_vmaxes_zmin0.003_zmax0.3.fits"
-	output:
-		"simba_comparison.png"
-	conda:
-		"environment.yml"
-	script:
-		"src/scripts/simba_comparison.py"
 rule rlf_evolution:
 	input:
-                "src/static/RLFs_flux_lim.csv",
                 "src/static/redshift_bins.csv",
 		"src/data/lockman_vmaxes_zmin0.003_zmax0.3.fits",
                 "src/data/en1_vmaxes_zmin0.003_zmax0.3.fits",
@@ -43,30 +35,10 @@ rule rlf_evolution:
                 "src/data/lockman_vmaxes_zmin1.0_zmax1.5.fits",
                 "src/data/lockman_vmaxes_zmin1.5_zmax2.0.fits",
                 "src/data/lockman_vmaxes_zmin2.0_zmax2.5.fits",
-                "src/data/lockman_vmaxes_zmin0.1_zmax0.4.fits",
-                "src/data/lockman_vmaxes_zmin0.4_zmax0.6.fits",
-                "src/data/lockman_vmaxes_zmin0.6_zmax0.8.fits",
-                "src/data/lockman_vmaxes_zmin0.8_zmax1.0.fits",
-                "src/data/lockman_vmaxes_zmin1.0_zmax1.3.fits",
-                "src/data/lockman_vmaxes_zmin1.3_zmax1.6.fits",
-                "src/data/lockman_vmaxes_zmin1.6_zmax2.0.fits",
-                "src/data/lockman_vmaxes_zmin2.5_zmax3.3.fits",
-                "src/data/lockman_vmaxes_zmin3.3_zmax4.6.fits",
-                "src/data/lockman_vmaxes_zmin4.6_zmax5.7.fits",
                 "src/data/en1_vmaxes_zmin0.5_zmax1.0.fits",
                 "src/data/en1_vmaxes_zmin1.0_zmax1.5.fits",
                 "src/data/en1_vmaxes_zmin1.5_zmax2.0.fits",
-                "src/data/en1_vmaxes_zmin2.0_zmax2.5.fits",
-                "src/data/en1_vmaxes_zmin0.1_zmax0.4.fits",
-                "src/data/en1_vmaxes_zmin0.4_zmax0.6.fits",
-                "src/data/en1_vmaxes_zmin0.6_zmax0.8.fits",
-                "src/data/en1_vmaxes_zmin0.8_zmax1.0.fits",
-                "src/data/en1_vmaxes_zmin1.0_zmax1.3.fits",
-                "src/data/en1_vmaxes_zmin1.3_zmax1.6.fits",
-                "src/data/en1_vmaxes_zmin1.6_zmax2.0.fits",
-                "src/data/en1_vmaxes_zmin2.5_zmax3.3.fits",
-                "src/data/en1_vmaxes_zmin3.3_zmax4.6.fits",
-                "src/data/en1_vmaxes_zmin4.6_zmax5.7.fits"
+                "src/data/en1_vmaxes_zmin2.0_zmax2.5.fits"
 	output:
 		"RLF_evolution.png",
                 "src/output/integrated_differences.txt"
@@ -82,5 +54,7 @@ rule calculate_vars:
                 "src/tex/output/en1_detectable.txt",
                 "src/tex/output/flowchart_numbers.txt",
                 "src/tex/output/lockman_detectable.txt"
+	conda:
+		"environment.yml"
 	script:
 		"src/scripts/flowchart_numbers.py"

@@ -56,7 +56,7 @@ dependencies:
    src/scripts/RLF_evolution.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
-  src/scripts/flowchart_numbers.py:
+   src/scripts/flowchart_numbers.py:
     - src/scripts/helper_functions.py
     - src/static/en1_03_matched_inMOC_inHR.fits
     - src/static/lockman_03_matched_inMOC_inHR.fits

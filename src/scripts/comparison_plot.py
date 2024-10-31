@@ -43,9 +43,18 @@ lockman_tmp = lockman_vmaxes[keep_cols]
 elais_tmp = elais_vmaxes[keep_cols]
 vmaxes = vstack([lockman_tmp,elais_tmp])
 
-lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
+t = Table.read( paths.data / 'rlfs/rlfs_zmin0.003_zmax0.3_lmin20.5_lmax27.fits', fomrat='fits' )
 
-e_agn_lum_func, e_sf_lum_func, e_gal_agn_lum_func, e_gal_sf_lum_func = random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si, nsamp=1000 )
+lum_bins = t['lum_bins']
+lum_func = t['lum_func']
+agn_lum_func = t['agn_lum_func']
+sf_lum_func = t['sf_lum_func']
+gal_agn_lum_func = t['gal_agn_lum_func']
+gal_sf_lum_func = t['gal_sf_lum_func']
+e_agn_lum_func = t['e_agn_lum_func']
+e_sf_lum_func = t['e_sf_lum_func']
+e_gal_agn_lum_func = t['e_gal_agn_lum_func']
+e_gal_sf_lum_func = t['e_gal_sf_lum_func']
 
 lum_bin_cens = lum_bins[0:-1] + 0.5*(lum_bins[1]-lum_bins[0])
 

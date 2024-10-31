@@ -382,56 +382,43 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
 
 def random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7, nsamp=1000 ):
 
-    ## first check if a file already exists
-    outfile = paths.data / 'rlfs/errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
-    if not os.path.exists(outfile):
+    ## randomly re-sample 1000 times
+    print('randomly resampling to get uncertainties')
+    nsamp = 1000
+    agn_lfs = np.zeros((len(agn_lum_func),nsamp))
+    sf_lfs = np.zeros((len(agn_lum_func),nsamp))
+    g_agn_lfs = np.zeros((len(agn_lum_func),nsamp))
+    g_sf_lfs = np.zeros((len(agn_lum_func),nsamp))
+    fracs = np.zeros(nsamp)
 
-        ## randomly re-sample 1000 times
-        print('randomly resampling to get uncertainties')
-        nsamp = 1000
-        agn_lfs = np.zeros((len(agn_lum_func),nsamp))
-        sf_lfs = np.zeros((len(agn_lum_func),nsamp))
-        g_agn_lfs = np.zeros((len(agn_lum_func),nsamp))
-        g_sf_lfs = np.zeros((len(agn_lum_func),nsamp))
-        fracs = np.zeros(nsamp)
-
-        for i in np.arange(0,nsamp):
-            np.random.seed(i)
-            idx = np.random.randint(low=0,high=len(vmaxes),size=len(vmaxes))
-            fracs[i] = float(len(np.unique(idx))) / float(len(vmaxes))
-            lb, lf, agn_lf, sf_lf, g_agn_lf, g_sf_lf = get_RLFs( vmaxes[idx], zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
-            agn_lfs[:,i] = agn_lf
-            sf_lfs[:,i] = sf_lf
-            g_agn_lfs[:,i] = g_agn_lf
-            g_sf_lfs[:,i] = g_sf_lf
+    for i in np.arange(0,nsamp):
+        np.random.seed(i)
+        idx = np.random.randint(low=0,high=len(vmaxes),size=len(vmaxes))
+        fracs[i] = float(len(np.unique(idx))) / float(len(vmaxes))
+        lb, lf, agn_lf, sf_lf, g_agn_lf, g_sf_lf = get_RLFs( vmaxes[idx], zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
+        agn_lfs[:,i] = agn_lf
+        sf_lfs[:,i] = sf_lf
+        g_agn_lfs[:,i] = g_agn_lf
+        g_sf_lfs[:,i] = g_sf_lf
 
 
-        ## as I'm sampling with replacement, need to scale by the size of the resulting random sample
-        tmp = np.tile( agn_lum_func, (nsamp,1) ).transpose()
-        e_agn_lum_func = np.std( np.sqrt(fracs)*(agn_lfs-tmp),axis=1)
-        tmp = np.tile( sf_lum_func, (nsamp,1) ).transpose()
-        e_sf_lum_func = np.std( np.sqrt(fracs)*(sf_lfs-tmp),axis=1)
-        tmp = np.tile( gal_agn_lum_func, (nsamp,1) ).transpose()
-        e_gal_agn_lum_func = np.std( np.sqrt(fracs)*(g_agn_lfs-tmp), axis=1 )
-        tmp = np.tile( gal_sf_lum_func, (nsamp,1) ).transpose()
-        e_gal_sf_lum_func = np.std(np.sqrt(fracs)*(g_sf_lfs-tmp),axis=1)
+    ## as I'm sampling with replacement, need to scale by the size of the resulting random sample
+    tmp = np.tile( agn_lum_func, (nsamp,1) ).transpose()
+    e_agn_lum_func = np.std( np.sqrt(fracs)*(agn_lfs-tmp),axis=1)
+    tmp = np.tile( sf_lum_func, (nsamp,1) ).transpose()
+    e_sf_lum_func = np.std( np.sqrt(fracs)*(sf_lfs-tmp),axis=1)
+    tmp = np.tile( gal_agn_lum_func, (nsamp,1) ).transpose()
+    e_gal_agn_lum_func = np.std( np.sqrt(fracs)*(g_agn_lfs-tmp), axis=1 )
+    tmp = np.tile( gal_sf_lum_func, (nsamp,1) ).transpose()
+    e_gal_sf_lum_func = np.std(np.sqrt(fracs)*(g_sf_lfs-tmp),axis=1)
 
-        ## replace small values with 0.03
-        e_agn_lum_func[np.where(e_agn_lum_func < 0.03)[0]] = 0.03
-        e_sf_lum_func[np.where(e_sf_lum_func < 0.03)[0]] = 0.03
-        e_gal_agn_lum_func[np.where(e_gal_agn_lum_func < 0.03)[0]] = 0.03
-        e_gal_sf_lum_func[np.where(e_gal_sf_lum_func < 0.03)[0]] = 0.03
+    ## replace small values with 0.03
+    e_agn_lum_func[np.where(e_agn_lum_func < 0.03)[0]] = 0.03
+    e_sf_lum_func[np.where(e_sf_lum_func < 0.03)[0]] = 0.03
+    e_gal_agn_lum_func[np.where(e_gal_agn_lum_func < 0.03)[0]] = 0.03
+    e_gal_sf_lum_func[np.where(e_gal_sf_lum_func < 0.03)[0]] = 0.03
 
-        ## write out to a file
-        t = Table()
-        t.add_column( e_agn_lum_func, name='e_agn_lum_func' )
-        t.add_column( e_sf_lum_func, name='e_sf_lum_func' )
-        t.add_column( e_gal_agn_lum_func, name='e_gal_agn_lum_func' )
-        t.add_column( e_gal_sf_lum_func, name='e_gal_sf_lum_func' )
-        t.write( outfile, format='fits' )
-    else:
-        t = Table.read( outfile, format='fits' )
-    return( t['e_agn_lum_func'], t['e_sf_lum_func'], t['e_gal_agn_lum_func'], t['e_gal_sf_lum_func'] )
+    return( e_agn_lum_func, e_sf_lum_func, e_gal_agn_lum_func, e_gal_sf_lum_func )
 
 
 ######################################################################

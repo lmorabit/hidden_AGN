@@ -27,8 +27,8 @@ rule calculate_rlf:
 		"src/scripts/calculate_RLFs.py"
 rule comparison_plot:
         input:
-                "src/static/kondapally_2022_table2.csv",
-                "src/static/cochrane_2023_table1.csv",
+                "src/data/kondapally_2022_table2.csv",
+                "src/data/cochrane_2023_table1.csv",
                 "src/data/rlfs/rlfs_zmin0.003_zmax0.3_lmin20.5_lmax27.fits"
         output:
                 "deep_fields_RLFs.png"
@@ -49,8 +49,8 @@ rule rlf_evolution:
 		"src/scripts/RLF_evolution.py"
 rule calculate_vars:
 	input: 
-		"src/static/en1_03_matched_inMOC_inHR.fits",
-		"src/static/lockman_03_matched_inMOC_inHR.fits",
+		"src/data/en1_03_matched_inMOC_inHR.fits",
+		"src/data/lockman_03_matched_inMOC_inHR.fits",
 	output:
                 "src/tex/output/en1_detectable.txt",
                 "src/tex/output/flowchart_numbers.txt",

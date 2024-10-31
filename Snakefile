@@ -29,7 +29,7 @@ rule comparison_plot:
         input:
                 "src/data/kondapally_2022_table2.csv",
                 "src/data/cochrane_2023_table1.csv",
-                "src/data/rlfs/rlfs_zmin0.003_zmax0.3_lmin20.5_lmax27.fits"
+                "src/data/rlfs"
         output:
                 "deep_fields_RLFs.png"
         conda:

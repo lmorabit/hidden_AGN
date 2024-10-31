@@ -16,16 +16,7 @@ rule generate_vmax:
 		"src/scripts/generateVmaxes.py"
 rule calculate_rlf:
 	input:
-		"src/data/vmaxes/lockman_vmaxes_zmin0.003_zmax0.3.fits",
-                "src/data/vmaxes/lockman_vmaxes_zmin0.5_zmax1.0.fits",
-                "src/data/vmaxes/lockman_vmaxes_zmin1.0_zmax1.5.fits",
-                "src/data/vmaxes/lockman_vmaxes_zmin1.5_zmax2.0.fits",
-                "src/data/vmaxes/lockman_vmaxes_zmin2.0_zmax2.5.fits",
-                "src/data/vmaxes/en1_vmaxes_zmin0.003_zmax0.3.fits",
-                "src/data/vmaxes/en1_vmaxes_zmin0.5_zmax1.0.fits",
-                "src/data/vmaxes/en1_vmaxes_zmin1.0_zmax1.5.fits",
-                "src/data/vmaxes/en1_vmaxes_zmin1.5_zmax2.0.fits",
-                "src/data/vmaxes/en1_vmaxes_zmin2.0_zmax2.5.fits"
+		"src/data/vmaxes",
 	output:
 		directory("src/data/rlfs")
 	cache:

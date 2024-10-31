@@ -42,8 +42,8 @@ rule rlf_evolution:
 		"src/data/vmaxes"
 	output:
 		"RLF_evolution.png",
-                "src/output/integrated_differences.txt"
-		"src/output/average_integrated_differences.txt"
+                "src/tex/output/integrated_differences.txt"
+		"src/tex/output/average_integrated_differences.txt"
 	conda:
 		"environment.yml"
 	script:

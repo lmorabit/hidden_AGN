@@ -63,6 +63,7 @@ dependencies:
    src/scripts/comparison_plot.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
+     - src/data/rlfs/
      - src/data/kondapally_2022_table2.csv
      - src/data/cochrane_2023_table1.csv
    src/scripts/calculate_RLFs.py:

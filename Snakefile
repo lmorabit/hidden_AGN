@@ -43,7 +43,7 @@ rule rlf_evolution:
 		"src/data/rlfs/rlfs_zmin1.0_zmax1.5_lmin20.5_lmax27.fits",
 		"src/data/rlfs/rlfs_zmin1.5_zmax2.0_lmin20.5_lmax27.fits",
 		"src/data/rlfs/rlfs_zmin2.0_zmax2.5_lmin20.5_lmax27.fits"
-		"src/data/vmaxes/redshift_bins.csv"
+		"src/data/vmaxes"
 	output:
 		"RLF_evolution.png",
                 "src/output/integrated_differences.txt"

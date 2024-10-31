@@ -70,7 +70,7 @@ dependencies:
      - src/data/vmaxes/
    src/scripts/RLF_evolution.py:
      - src/scripts/helper_functions.py
-     - src/data/vmaxes/redshift_bins.csv
+     - src/data/vmaxes/
      - src/data/rlfs/
    src/scripts/flowchart_numbers.py:
      - src/scripts/helper_functions.py

@@ -53,9 +53,9 @@ for i in np.arange(0,5):
     zmin = zbin_starts[i]
     zmax = zbin_ends[i]
 
-    infile = paths.data / 'rlfs/rlfs_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
+    infile = paths.data / 'rlfs/rlfs_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}_dl{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax),str(dl))
     t = Table.read( infile, format='fits' )
-    lum_bins = t['lum_bins']
+    lum_bins = np.arange( lmin, lmax, dl )
     lum_func = t['lum_func']
     agn_lum_func = t['agn_lum_func']
     sf_lum_func = t['sf_lum_func']

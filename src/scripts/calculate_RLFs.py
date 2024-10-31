@@ -54,7 +54,6 @@ for i in np.arange(0,5):
     print(len(agn_lum_func))
 
     t = Table()
-    t.add_column( lum_bins, name='lum_bins' )
     t.add_column( lum_func, name='lum_func' )
     t.add_column( agn_lum_func, name='agn_lum_func' )
     t.add_column( sf_lum_func, name='sf_lum_func' )
@@ -65,7 +64,7 @@ for i in np.arange(0,5):
     t.add_column( e_gal_agn_lum_func, name='e_gal_agn_lum_func' )
     t.add_column( e_gal_sf_lum_func, name='e_gal_sf_lum_func' )
 
-    outfile = paths.data / 'rlfs/rlfs_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
+    outfile = paths.data / 'rlfs/rlfs_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}_dl{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax),str(dl))
 
     t.write( outfile )
 

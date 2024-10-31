@@ -43,9 +43,9 @@ lockman_tmp = lockman_vmaxes[keep_cols]
 elais_tmp = elais_vmaxes[keep_cols]
 vmaxes = vstack([lockman_tmp,elais_tmp])
 
-t = Table.read( paths.data / 'rlfs/rlfs_zmin0.003_zmax0.3_lmin20.5_lmax27.fits', fomrat='fits' )
+t = Table.read( paths.data / 'rlfs/rlfs_zmin0.003_zmax0.3_lmin20.5_lmax27_dl0.3.fits', fomrat='fits' )
 
-lum_bins = t['lum_bins']
+lum_bins = np.arange( lmin, lmax, dl )
 lum_func = t['lum_func']
 agn_lum_func = t['agn_lum_func']
 sf_lum_func = t['sf_lum_func']

@@ -16,7 +16,7 @@ rule generate_vmax:
 		"src/scripts/generateVmaxes.py"
 rule calculate_rlf:
 	input:
-		"src/data/vmaxes",
+		"src/data/vmaxes"
 	output:
 		directory("src/data/rlfs")
 	cache:

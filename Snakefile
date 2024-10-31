@@ -43,6 +43,7 @@ rule rlf_evolution:
 	output:
 		"RLF_evolution.png",
                 "src/output/integrated_differences.txt"
+		"src/output/average_integrated_differences.txt"
 	conda:
 		"environment.yml"
 	script:

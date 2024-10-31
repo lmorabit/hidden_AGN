@@ -76,9 +76,13 @@ dependencies:
      - src/scripts/helper_functions.py
      - src/data/en1_03_matched_inMOC_inHR.fits
      - src/data/lockman_03_matched_inMOC_inHR.fits
-
-  # src/tex/ms.tex:
-  #   - src/tex/stylesheet.tex
+   src/tex/ms.tex:
+     - src/static/agn_sf_separation_workflow.png
+     - src/output/integrated_differences.txt
+     - src/output/average_integrated_differences.txt
+     - src/output/en1_detectable.txt
+     - src/output/lockman_detectable.txt
+     - src/output/flowchart_numbers.txt
 
 # margin icons
 #

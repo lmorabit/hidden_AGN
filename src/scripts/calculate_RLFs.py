@@ -50,6 +50,9 @@ for i in np.arange(0,5):
     lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
     e_agn_lum_func, e_sf_lum_func, e_gal_agn_lum_func, e_gal_sf_lum_func = random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si, nsamp=1000 )
 
+    print(len(lum_bins))
+    print(len(gal_sf_lum_func))
+
     t = Table()
     t.add_column( lum_bins, name='lum_bins' )
     t.add_column( lum_func, name='lum_func' )

@@ -37,6 +37,18 @@ datasets:
   10.5281/zenodo.14013439:
     contents:
       kondapally_2022_table2.csv: src/data/kondapally_2022_table2.csv
+  10.5281/zenodo.14014490:
+    contents:
+      lockman_03_matched_inMOC_inHR.fits: src/data/lockman_03_matched_inMOC_inHR.fits
+  10.5281/zenodo.14014542:
+    contents:
+      lockman_DR1_rms_masked.fits: src/data/lockman_DR1_rms_masked.fits
+  10.5281/zenodo.14014849:
+    contents:
+      en1_03_matched_inMOC_inHR.fits: src/data/en1_03_matched_inMOC_inHR.fits
+  10.5281/zenodo.14014853:
+    contents:
+      en1_DR1_rms_masked.fits: src/data/en1_DR1_rms_masked.fits
 
 # Custom file dependencies
 dependencies:
@@ -44,22 +56,26 @@ dependencies:
      - src/scripts/helper_functions.py
      - src/data/cochrane_2023_tableA1.csv
      - src/data/kondapally_2022_table1.csv
-     - src/static/en1_03_matched_inMOC_inHR.fits
-     - src/static/en1_DR1_rms_masked.fits
-     - src/static/lockman_03_matched_inMOC_inHR.fits
-     - src/static/lockman_DR1_rms_masked.fits
+     - src/data/en1_03_matched_inMOC_inHR.fits
+     - src/data/en1_DR1_rms_masked.fits
+     - src/data/lockman_03_matched_inMOC_inHR.fits
+     - src/data/lockman_DR1_rms_masked.fits
    src/scripts/comparison_plot.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
      - src/data/kondapally_2022_table2.csv
      - src/data/cochrane_2023_table1.csv
-   src/scripts/RLF_evolution.py:
+   src/scripts/calculate_RLFs.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
+   src/scripts/RLF_evolution.py:
+     - src/scripts/helper_functions.py
+     - src/data/vmaxes/redshift_bins.csv
+     - src/data/rlfs/
    src/scripts/flowchart_numbers.py:
-    - src/scripts/helper_functions.py
-    - src/static/en1_03_matched_inMOC_inHR.fits
-    - src/static/lockman_03_matched_inMOC_inHR.fits
+     - src/scripts/helper_functions.py
+     - src/data/en1_03_matched_inMOC_inHR.fits
+     - src/data/lockman_03_matched_inMOC_inHR.fits
 
   # src/tex/ms.tex:
   #   - src/tex/stylesheet.tex

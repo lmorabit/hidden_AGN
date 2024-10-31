@@ -29,7 +29,7 @@ lmax = 27
 dl = 0.3
 
 ## read in the data 
-t = Table.read( paths.static / 'redshift_bins.csv', format='csv' )
+t = Table.read( paths.data / 'vmaxes/redshift_bins.csv', format='csv' )
 zbin_starts = t['zbin_starts']
 zbin_ends = t['zbin_ends']
 
@@ -49,17 +49,22 @@ e_z_gal_sf_lum_func = []
 
 
 for i in np.arange(0,5):
+
     zmin = zbin_starts[i]
     zmax = zbin_ends[i]
-    keep_cols = ['Total_flux_dr','Z_BEST','vmax','agn_vmax','sf_vmax','AGN_flux','SF_flux', 'Overall_class','Mass_cons','SFR_cons']
-    vmaxes = Table()
-    for field in fields:
-        infile = '{:s}_vmaxes_zmin{:s}_zmax{:s}.fits'.format(field,str(zmin),str(zmax))
-        tmp = Table.read( paths.static / infile, format='fits' )
-        vmaxes = vstack([vmaxes,tmp[keep_cols]],metadata_conflicts='silent')
-    lum_bins, lum_func, agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func = get_RLFs( vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si )
-    
-    e_agn_lum_func, e_sf_lum_func, e_gal_agn_lum_func, e_gal_sf_lum_func = random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=lmin, lmax=lmax, dl=dl, si=si, nsamp=1000 )
+
+    infile = paths.data / 'rlfs/rlfs_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
+    t = Table.read( infile, format='fits' )
+    lum_bins = t['lum_bins']
+    lum_func = t['lum_func']
+    agn_lum_func = t['agn_lum_func']
+    sf_lum_func = t['sf_lum_func']
+    gal_agn_lum_func = t['gal_agn_lum_func']
+    gal_sf_lum_func = t['gal_sf_lum_func']
+    e_agn_lum_func = t['e_agn_lum_func']
+    e_sf_lum_func = t['e_sf_lum_func']
+    e_gal_agn_lum_func = t['e_gal_agn_lum_func']
+    e_gal_sf_lum_func = t['e_gal_sf_lum_func']
 
     ## filter out unconstrained bins - AGN
     filter_idx = np.where( np.abs(agn_lum_func - lum_func) > 4. )[0]

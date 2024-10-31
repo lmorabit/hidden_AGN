@@ -383,7 +383,7 @@ def get_RLFs( vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7 ):
 def random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_func, vmaxes, zmin, zmax, lmin=20.5, lmax=27, dl=0.3, si=-0.7, nsamp=1000 ):
 
     ## first check if a file already exists
-    outfile = paths.data / 'errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
+    outfile = paths.data / 'rlfs/errors_zmin{:s}_zmax{:s}_lmin{:s}_lmax{:s}.fits'.format(str(zmin),str(zmax),str(lmin),str(lmax))
     if not os.path.exists(outfile):
 
         ## randomly re-sample 1000 times
@@ -439,7 +439,7 @@ def random_resample( agn_lum_func, sf_lum_func, gal_agn_lum_func, gal_sf_lum_fun
 
 def effective_area( rms_file ):
     tmp = os.path.basename( rms_file )
-    outfile = paths.static / tmp.replace( '.fits', '_effective_areas.fits' ) 
+    outfile = paths.data / tmp.replace( '.fits', '_effective_areas.fits' ) 
     print(outfile)
     if os.path.exists( outfile ):
         t = Table.read( outfile, format='fits' )

@@ -2,10 +2,10 @@ rule generate_vmax:
 	input:
                 "src/data/kondapally_2022_table1.csv",
                 "src/data/cochrane_2023_tableA1.csv",
-		"src/static/en1_03_matched_inMOC_inHR.fits",
-		"src/static/lockman_03_matched_inMOC_inHR.fits",
-		"src/static/en1_DR1_rms_masked.fits",
-		"src/static/lockman_DR1_rms_masked.fits"
+		"src/data/en1_03_matched_inMOC_inHR.fits",
+		"src/data/lockman_03_matched_inMOC_inHR.fits",
+		"src/data/en1_DR1_rms_masked.fits",
+		"src/data/lockman_DR1_rms_masked.fits"
 	output:
 		directory("src/data/vmaxes")
 	cache:
@@ -14,12 +14,23 @@ rule generate_vmax:
 		"environment.yml"
 	script:
 		"src/scripts/generateVmaxes.py"
+rule calculate_rlf:
+	input:
+		directory("src/data/vmaxes")
+	output:
+		directory("src/data/rlfs")
+	cache:
+		True
+	conda:
+		"environment.yml"
+	script:
+		"src/scripts/calculate_RLFs.py"
 rule comparison_plot:
         input:
                 "src/static/kondapally_2022_table2.csv",
                 "src/static/cochrane_2023_table1.csv",
-                "src/data/lockman_vmaxes_zmin0.003_zmax0.3.fits",
-                "src/data/en1_vmaxes_zmin0.003_zmax0.3.fits"
+                "src/data/vmaxes/lockman_vmaxes_zmin0.003_zmax0.3.fits",
+                "src/data/vmaxes/en1_vmaxes_zmin0.003_zmax0.3.fits"
         output:
                 "deep_fields_RLFs.png"
         conda:
@@ -28,17 +39,8 @@ rule comparison_plot:
                 "src/scripts/comparison_plot.py"
 rule rlf_evolution:
 	input:
-                "src/static/redshift_bins.csv",
-		"src/data/lockman_vmaxes_zmin0.003_zmax0.3.fits",
-                "src/data/en1_vmaxes_zmin0.003_zmax0.3.fits",
-                "src/data/lockman_vmaxes_zmin0.5_zmax1.0.fits",
-                "src/data/lockman_vmaxes_zmin1.0_zmax1.5.fits",
-                "src/data/lockman_vmaxes_zmin1.5_zmax2.0.fits",
-                "src/data/lockman_vmaxes_zmin2.0_zmax2.5.fits",
-                "src/data/en1_vmaxes_zmin0.5_zmax1.0.fits",
-                "src/data/en1_vmaxes_zmin1.0_zmax1.5.fits",
-                "src/data/en1_vmaxes_zmin1.5_zmax2.0.fits",
-                "src/data/en1_vmaxes_zmin2.0_zmax2.5.fits"
+		directory("src/data/rlfs"),
+		"src/data/vmaxes/redshift_bins.csv"
 	output:
 		"RLF_evolution.png",
                 "src/output/integrated_differences.txt"

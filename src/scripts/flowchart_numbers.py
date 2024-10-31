@@ -31,9 +31,8 @@ mycat = Table()
 
 for field in fields:
     print('Starting with field: {:s}'.format(field))
-    infile = paths.static / '{:s}_03_matched_inMOC_inHR.fits'.format(field)
+    infile = paths.data / '{:s}_03_matched_inMOC_inHR.fits'.format(field)
     field = os.path.basename(infile).split('_')[0]
-    #rms_image = paths.static / '{:s}_DR1_rms_masked.fits'.format(field)
     lotss = Table.read( infile, format='fits' )
     ## add brightness temperature information
     lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )

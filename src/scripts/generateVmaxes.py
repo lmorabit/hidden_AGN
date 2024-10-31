@@ -30,7 +30,7 @@ kondapally = Table.read( paths.data / 'kondapally_2022_table1.csv', format='csv'
 
 fields = ['lockman', 'en1']
 
-os.makedirs( paths.data / 'vmaxes' )
+os.makedirs( paths.data / 'vmaxes', exist_ok=True )
 
 ## define redshift bins
 zbin_starts = np.asarray([0.003, 0.5, 1.0, 1.5, 2.0])
@@ -44,9 +44,9 @@ outcat = Table()
 
 for field in fields:
     print('Starting with field: {:s}'.format(field))
-    infile = paths.static / '{:s}_03_matched_inMOC_inHR.fits'.format(field)
+    infile = paths.data / '{:s}_03_matched_inMOC_inHR.fits'.format(field)
     field = os.path.basename(infile).split('_')[0]
-    rms_image = paths.static / '{:s}_DR1_rms_masked.fits'.format(field)
+    rms_image = paths.data / '{:s}_DR1_rms_masked.fits'.format(field)
     lotss = Table.read( infile, format='fits' )
     ## add brightness temperature information
     lotss = get_tb_information( lotss, im_weight=0.5, maj_lim=0.4, min_lim=0.3, T_e=T_e, alpha=si, ref_freqs=ref_freqs, freqs_GHz=freqs_GHz, use_z=False )

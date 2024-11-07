@@ -10,5 +10,6 @@ dependencies:
   - conda-forge::pulp=2.8.0
   - conda-forge::nest-asyncio
   - bioconda::snakemake
+  - conda-forge::pip
   - pip:
       - git+https://github.com/thomasckng/showyourwork

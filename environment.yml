@@ -1,6 +1,14 @@
 dependencies:
-  - conda-forge::numpy=1.19.2
-  - conda-forge::pip=21.0.1
-  - conda-forge::python=3.9
+  - conda-forge::numpy
+  - conda-forge::python=3.10
+  - conda-forge::astropy
+  - conda-forge::scipy
+  - conda-forge::progress
+  - conda-forge::matplotlib==3.4.3
+  - conda-forge::Flask
+  - conda-forge::pulp=2.8.0
+  - conda-forge::nest-asyncio
+  - bioconda::snakemake
+  - conda-forge::pip
   - pip:
-      - matplotlib==3.4.3
+      - git+https://github.com/thomasckng/showyourwork

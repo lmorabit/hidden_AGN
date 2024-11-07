@@ -1,15 +1,15 @@
 name: syw
 dependencies:
-  - numpy
-  - python=3.10
-  - astropy
-  - scipy
-  - progress
-  - matplotlib==3.4.3
-  - Flask
-  - pulp=2.8.0
-  - nest-asyncio
-  - snakemake
-  - pip
+  - conda-forge::numpy
+  - conda-forge::python=3.10
+  - conda-forge::astropy
+  - conda-forge::scipy
+  - conda-forge::progress
+  - conda-forge::matplotlib
+  - conda-forge::Flask
+  - conda-forge::pulp=2.8.0
+  - conda-forge::nest-asyncio
+  - bioconda::snakemake
+  - conda-forge::pip
   - pip:
       - git+https://github.com/thomasckng/showyourwork

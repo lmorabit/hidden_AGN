@@ -16,7 +16,7 @@ jobs:
 
       - name: Conda setup
         shell: bash
-        run: conda config --env --set channel_priority strict 
+        run: conda config --env --set channel_priority flexible
 
       - name: Build the article PDF
         id: build

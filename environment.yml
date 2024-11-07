@@ -11,4 +11,4 @@ dependencies:
   - conda-forge::nest-asyncio
   - bioconda::snakemake
   - pip:
-      - git+https://github.com/showyourwork/showyourwork
+      - git+https://github.com/thomasckng/showyourwork

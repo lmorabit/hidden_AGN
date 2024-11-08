@@ -52,12 +52,23 @@ datasets:
 
 # Custom file dependencies
 dependencies:
+   src/scripts/generateVmaxes.py:
+     - src/scripts/helper_functions.py
+     - src/data/cochrane_2023_tableA1.csv
+     - src/data/kondapally_2022_table1.csv
+     - src/data/en1_03_matched_inMOC_inHR.fits
+     - src/data/en1_DR1_rms_masked.fits
+     - src/data/lockman_03_matched_inMOC_inHR.fits
+     - src/data/lockman_DR1_rms_masked.fits
    src/scripts/comparison_plot.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
      - src/data/rlfs/
      - src/data/kondapally_2022_table2.csv
      - src/data/cochrane_2023_table1.csv
+   src/scripts/calculate_RLFs.py:
+     - src/scripts/helper_functions.py
+     - src/data/vmaxes/
    src/scripts/RLF_evolution.py:
      - src/scripts/helper_functions.py
      - src/data/vmaxes/
